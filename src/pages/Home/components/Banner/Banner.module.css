@@ -1,0 +1,21 @@
+.btn-banner-left {
+    left: 20px;
+    opacity: 0;
+    transition: all 0.2s ease-in;
+}
+
+.btn-banner-right {
+    right: 20px;
+    opacity: 0;
+    transition: all 0.2s ease-in;
+}
+
+.banner-slide:hover .btn-banner-left {
+    left: 50px;
+    opacity: 1;
+}
+
+.banner-slide:hover .btn-banner-right {
+    right: 50px;
+    opacity: 1;
+}
