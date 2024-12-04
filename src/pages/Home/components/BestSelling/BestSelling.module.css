@@ -1,0 +1,23 @@
+.bestselling-slide::-webkit-scrollbar {
+    display: none;
+}
+
+.btn-bestselling-left {
+    opacity: 0;
+}
+
+.btn-bestselling-right {
+    opacity: 0;
+}
+
+.bestselling-slide:hover .btn-bestselling-left {
+    left: 0;
+    opacity: 1;
+    transition: all 0.25s ease-in;
+}
+
+.bestselling-slide:hover .btn-bestselling-right {
+    right: 0;
+    opacity: 1;
+    transition: all 0.25s ease-in;
+}
