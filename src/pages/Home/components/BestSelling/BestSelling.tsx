@@ -64,7 +64,6 @@ export default function BestSelling() {
         }
     }
 
-    console.log(count)
     return (
         <div className='mt-4 bg-[#f8f9f9]'>
             <div className='max-w-[1142px] mx-auto py-6 relative'>
@@ -86,7 +85,7 @@ export default function BestSelling() {
                     {productDataBestSell &&
                         productDataBestSell.map((product) => (
                             <div
-                                className='h-full w-[229.5px] pl-3 pr-4 border-r-[1px] border-[#ececec]'
+                                className='h-full min-w-[228.5px] pl-3 pr-4 border-r-[1px] border-[#ececec]'
                                 key={product.id}
                             >
                                 <img src={product.imageUrl} alt='' className='w-full h-[242px] object-cover bg-black' />
@@ -98,14 +97,16 @@ export default function BestSelling() {
                                         {product.title}
                                     </Link>
                                 </div>
-                                <div className='flex items-center gap-2 mt-[6px]'>
-                                    <p className='text-[13px] line-through text-[#acacac]'>
-                                        {formatCurrency(product.price)}
-                                    </p>
-                                    <p className='text-[#f16325] text-[16px] font-semibold'>
-                                        {formatCurrency(product.price_discount)}
-                                    </p>
-                                    <div className='text-[14px] ml-10 text-[#f16325] border-[1px] border-[#f16325] flex items-center justify-center w-[26px] h-[20px] cursor-pointer'>
+                                <div className='flex items-center mt-[6px] w-full'>
+                                    <div className='flex items-center gap-3'>
+                                        <p className='text-[13px] line-through text-[#acacac]'>
+                                            {formatCurrency(product.price)}
+                                        </p>
+                                        <p className='text-[#f16325] text-[16px] font-semibold'>
+                                            {formatCurrency(product.price_discount)}
+                                        </p>
+                                    </div>
+                                    <div className='text-[14px] ml-auto text-[#f16325] border-[1px] border-[#f16325] flex items-center justify-center w-[26px] h-[20px] cursor-pointer'>
                                         <FontAwesomeIcon icon={faBagShopping} />
                                     </div>
                                 </div>
