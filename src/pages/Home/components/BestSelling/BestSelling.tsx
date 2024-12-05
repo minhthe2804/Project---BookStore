@@ -88,7 +88,7 @@ export default function BestSelling() {
                                 className='h-full min-w-[228.5px] pl-3 pr-4 border-r-[1px] border-[#ececec]'
                                 key={product.id}
                             >
-                                <img src={product.imageUrl} alt='' className='w-full h-[242px] object-cover bg-black' />
+                                <img src={product.imageUrl} alt='' className='w-full h-[242px] object-cover cursor-pointer' />
                                 <div className='text-[14px] text-[#555555] truncate group mt-3'>
                                     <Link
                                         to={path.home}
@@ -119,7 +119,7 @@ export default function BestSelling() {
                     {isFetching && (
                         <>
                             {[0, 0, 0, 0, 0].map((_, index) => (
-                                <div className='h-full min-w-[228.5px] pl-3 pr-4 animate-pulse' key={index}>
+                                <div className='h-full min-w-[228.5px] pl-3 pr-4 animate-none' key={index}>
                                     <div className='flex items-center justify-center w-full h-full border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700 '>
                                         <div role='status'>
                                             <svg
