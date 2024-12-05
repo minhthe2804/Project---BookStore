@@ -12,7 +12,7 @@ export default function BookLiterary() {
         queryFn: () => productApi.getProductList()
     })
 
-    const productDataComic = useMemo(
+    const productDataLiterary = useMemo(
         () => productListData?.data.filter((product) => product.category === 'Sách Văn Học'),
         [productListData?.data]
     )
@@ -22,9 +22,9 @@ export default function BookLiterary() {
             <div className='max-w-[1142px] mx-auto pt-[22px]'>
                 <TitleModule icon={faBook} width='w-[160px]' heading='Sách văn học' />
                 <div className='grid grid-cols-12 mt-2 gap-3'>
-                    {productDataComic &&
-                        productDataComic.map((product) => (
-                            <div className='col-span-3'>
+                    {productDataLiterary &&
+                        productDataLiterary.map((product) => (
+                            <div className='col-span-3' key={product.id}>
                                 <Product product={product} />
                             </div>
                         ))}

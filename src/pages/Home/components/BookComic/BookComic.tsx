@@ -24,7 +24,7 @@ export default function Comic() {
                 <div className='grid grid-cols-12 mt-2 gap-3'>
                     {productDataComic &&
                         productDataComic.map((product) => (
-                            <div className='col-span-3'>
+                            <div className='col-span-3' key={product.id}>
                                 <Product product={product} />
                             </div>
                         ))}

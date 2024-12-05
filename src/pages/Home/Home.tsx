@@ -2,6 +2,7 @@ import Banner from './components/Banner'
 import BestSelling from './components/BestSelling'
 import Comic from './components/BookComic'
 import BookLiterary from './components/BookLiterary'
+import CombinesTwo from './components/CombinesTwo'
 import MiniBanner from './components/MiniBanner'
 
 export default function Home() {
@@ -12,6 +13,7 @@ export default function Home() {
             <Comic />
             <MiniBanner />
             <BookLiterary />
+            <CombinesTwo />
         </div>
     )
 }
