@@ -10,6 +10,7 @@ import styles from './BestSelling.module.css'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import productApi from '~/apis/product.api'
 import { formatCurrency } from '~/utils/utils'
+import { titleModule } from '~/constants/titleModule'
 
 const cx = classNames.bind(styles)
 export default function BestSelling() {
@@ -70,8 +71,8 @@ export default function BestSelling() {
                 <TitleModule
                     icon={faBolt}
                     width='w-[160px]'
-                    heading={'Sách bán chạy'}
-                    promotion={'Khuyến mãi đã kết thúc'}
+                    heading={titleModule.bestSelling.heading}
+                    promotion={titleModule.bestSelling.promotion}
                 />
                 <div
                     className={cx(
@@ -88,7 +89,11 @@ export default function BestSelling() {
                                 className='h-full min-w-[228.5px] pl-3 pr-4 border-r-[1px] border-[#ececec]'
                                 key={product.id}
                             >
-                                <img src={product.imageUrl} alt='' className='w-full h-[242px] object-cover cursor-pointer' />
+                                <img
+                                    src={product.imageUrl}
+                                    alt=''
+                                    className='w-full h-[242px] object-cover cursor-pointer'
+                                />
                                 <div className='text-[14px] text-[#555555] truncate group mt-3'>
                                     <Link
                                         to={path.home}

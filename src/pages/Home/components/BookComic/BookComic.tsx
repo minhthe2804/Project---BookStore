@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import productApi from '~/apis/product.api'
 import { useMemo } from 'react'
 import Product from '~/components/Product'
+import { titleModule } from '~/constants/titleModule'
 
 export default function Comic() {
     const { data: productListData, isFetching } = useQuery({
@@ -20,7 +21,7 @@ export default function Comic() {
     return (
         <div>
             <div className='max-w-[1142px] mx-auto pt-[22px]'>
-                <TitleModule icon={faMarker} width='w-[160px]' heading='Truyện Tranh' />
+                <TitleModule icon={faMarker} width='w-[160px]' heading={titleModule.bookComic.heading} />
                 <div className='grid grid-cols-12 mt-2 gap-3'>
                     {productDataComic &&
                         productDataComic.map((product) => (

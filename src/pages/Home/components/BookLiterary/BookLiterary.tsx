@@ -5,6 +5,7 @@ import { useMemo } from 'react'
 import productApi from '~/apis/product.api'
 import Product from '~/components/Product'
 import TitleModule from '~/components/TitleModule'
+import { titleModule } from '~/constants/titleModule'
 
 export default function BookLiterary() {
     const { data: productListData, isFetching } = useQuery({
@@ -20,7 +21,7 @@ export default function BookLiterary() {
     return (
         <div className='mt-2'>
             <div className='max-w-[1142px] mx-auto pt-[22px]'>
-                <TitleModule icon={faBook} width='w-[160px]' heading='Sách văn học' />
+                <TitleModule icon={faBook} width='w-[160px]' heading={titleModule.bookLiterary.heading} />
                 <div className='grid grid-cols-12 mt-2 gap-3'>
                     {productDataLiterary &&
                         productDataLiterary.map((product) => (

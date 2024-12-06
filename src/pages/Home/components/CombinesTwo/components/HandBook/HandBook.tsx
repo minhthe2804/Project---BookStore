@@ -5,6 +5,7 @@ import { useMemo } from 'react'
 import productApi from '~/apis/product.api'
 import Product from '~/components/Product'
 import TitleModule from '~/components/TitleModule'
+import { titleModule } from '~/constants/titleModule'
 
 export default function HandBook() {
     const { data: productListData, isFetching } = useQuery({
@@ -18,7 +19,7 @@ export default function HandBook() {
     )
     return (
         <div>
-            <TitleModule icon={faHeart} width='w-[214px]' heading='CẨM NANG LÀM BỐ MẸ' />
+            <TitleModule icon={faHeart} width='w-[214px]' heading={titleModule.hankBook.heading} />
             <figure className='w-[556px] h-[98px]'>
                 <img
                     src='https://theme.hstatic.net/200000612501/1001045770/14/suckhoe_lamdep_banner.png?v=178'
@@ -65,7 +66,6 @@ export default function HandBook() {
                     ))}
                 </div>
             )}
-            
         </div>
     )
 }
