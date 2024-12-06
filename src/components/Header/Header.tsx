@@ -16,11 +16,13 @@ export default function Header() {
             <div className='max-w-[1142px] mx-auto'>
                 <div className='grid grid-cols-12 items-center'>
                     <div className='col-span-3'>
-                        <img
-                            src='https://theme.hstatic.net/200000612501/1001045770/14/logo.png?v=178'
-                            alt=''
-                            className='w-[100px] py-3'
-                        />
+                        <Link to={path.home}>
+                            <img
+                                src='https://theme.hstatic.net/200000612501/1001045770/14/logo.png?v=178'
+                                alt=''
+                                className='w-[100px] py-3'
+                            />
+                        </Link>
                     </div>
                     <div className='col-span-6'>
                         <div className='flex items-center pr-[5px] pl-3 bg-white w-full border-[1px] border-[#e5e6ec]'>

@@ -7,6 +7,9 @@ import Contact from './pages/Contact'
 import Collection from './pages/Collection'
 import News from './pages/News'
 import Introduce from './pages/Introduce'
+import Register from './pages/Register'
+import Login from './pages/Login'
+import ForgotPassword from './pages/ForgotPassword'
 
 export default function useRouteElements() {
     const routeElements = useRoutes([
@@ -48,6 +51,30 @@ export default function useRouteElements() {
             element: (
                 <MainLayout>
                     <Contact />
+                </MainLayout>
+            )
+        },
+        {
+            path: path.register,
+            element: (
+                <MainLayout>
+                    <Register />
+                </MainLayout>
+            )
+        },
+        {
+            path: path.login,
+            element: (
+                <MainLayout>
+                    <Login />
+                </MainLayout>
+            )
+        },
+        {
+            path: path.contact,
+            element: (
+                <MainLayout>
+                    <ForgotPassword />
                 </MainLayout>
             )
         }

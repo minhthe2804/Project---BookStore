@@ -6,5 +6,6 @@ export const path = {
     contact: '/contact',
     register: '/register',
     login: '/login',
-    forgotPassword: '/forgotpassword'
+    forgotPassword: '/forgotpassword',
+    changePassword: "/changepassword"
 }
