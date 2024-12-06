@@ -1,12 +1,86 @@
+import { useMutation, useQuery } from '@tanstack/react-query'
 import classNames from 'classnames'
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { Link, useNavigate } from 'react-router-dom'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { toast } from 'react-toastify'
+
 import BreadCrumb from '~/components/BreadCrumb'
 import Button from '~/components/Button'
 import Input from '~/components/Input'
 import { breadCrumb } from '~/constants/breadCrumb'
 import { path } from '~/constants/path'
+import { Schema, schema } from '~/utils/rules'
+import { authApi } from '~/apis/auth.api'
+import { toastNotify } from '~/constants/toastNotify'
 
+
+type FormData = Pick<Schema, 'lastname' | 'name' | 'email' | 'password'>
+const registerSchema = schema.pick(['lastname', 'name', 'email', 'password'])
 export default function Register() {
+    const [errorEmail, setErrorEmail] = useState<string>('')
+    const {
+        register,
+        reset,
+        handleSubmit,
+        formState: { errors }
+    } = useForm<FormData>({
+        defaultValues: {
+            email: '',
+            password: '',
+            lastname: '',
+            name: ''
+        },
+        resolver: yupResolver(registerSchema)
+    })
+
+    const navigate = useNavigate()
+    const regiterMutation = useMutation({
+        mutationFn: (body: {
+            name: { firstname: string; lastname: string }
+            username: string
+            email: string
+            password: string
+        }) => authApi.register(body)
+    })
+
+    const { data: dataUser } = useQuery({
+        queryKey: ['user'],
+        queryFn: () => authApi.registerAcount()
+    })
+
+    const isEmail = (email: string) => {
+        const isEmail = dataUser?.data.some((user) => user.email === email)
+        if (isEmail) {
+            setErrorEmail(toastNotify.register.emailError)
+            return true
+        }
+        return false
+    }
+
+    const onSubmit = handleSubmit((data) => {
+        const { email, lastname, name, password } = data
+        if (isEmail(email)) return
+        const registerAccount = {
+            name: {
+                firstname: name,
+                lastname
+            },
+            username: name + lastname,
+            email,
+            password
+        }
+        regiterMutation.mutate(registerAccount, {
+            onSuccess: (data) => {
+                console.log(data)
+                reset()
+                toast.success(toastNotify.register.registerSuccess, { autoClose: 2000 })
+                navigate(path.login)
+            }
+        })
+    })
+
     return (
         <div className='pb-[100px]'>
             <BreadCrumb title={breadCrumb.register.title} />
@@ -14,15 +88,15 @@ export default function Register() {
                 <h1 className='text-[20px] text-[#555555]'>Tạo tài khoản</h1>
                 <p className='text-[14px] text-[#555555]'>Nếu chưa có tài khoản vui lòng đăng ký tại đây</p>
 
-                <form className='grid grid-cols-12 mt-4 gap-x-9 '>
+                <form className='grid grid-cols-12 mt-4 gap-x-9' onSubmit={onSubmit}>
                     <div className='col-span-6'>
                         <Input
                             classNameError='text-red-500 text-[14px] mt-1 min-h-[20px]'
                             classNameInput='w-full outline-none border-[1px] border-[#ebebeb] rounded-[4px] py-[9px] px-4 placeholder:text-[15px] focus:border-blue-400 transition duration-300 ease-in text-[15px] text-[#555d6b] mt-2'
                             label='Họ'
-                            // register={register}
-                            // errorMessage={errors.name?.message}
-                            // name='name'
+                            register={register}
+                            errorMessage={errors.lastname?.message}
+                            name='lastname'
                             type='text'
                         />
                     </div>
@@ -31,9 +105,9 @@ export default function Register() {
                             classNameError='text-red-500 text-[14px] mt-1 min-h-[20px]'
                             classNameInput='w-full outline-none border-[1px] border-[#ebebeb] rounded-[4px] py-[9px] px-4 placeholder:text-[15px] focus:border-blue-400 transition duration-300 ease-in text-[15px] text-[#555d6b] mt-2'
                             label='Tên'
-                            // register={register}
-                            // errorMessage={errors.name?.message}
-                            // name='name'
+                            register={register}
+                            errorMessage={errors.name?.message}
+                            name='name'
                             type='text'
                         />
                     </div>
@@ -42,10 +116,13 @@ export default function Register() {
                             classNameError='text-red-500 text-[14px] mt-1 min-h-[20px]'
                             classNameInput='w-full outline-none border-[1px] border-[#ebebeb] rounded-[4px] py-[9px] px-4 placeholder:text-[15px] focus:border-blue-400 transition duration-300 ease-in text-[15px] text-[#555d6b] mt-2'
                             label='Email'
-                            // register={register}
-                            // errorMessage={errors.name?.message}
-                            // name='name'
+                            register={register}
+                            errorMessage={errors.email?.message}
+                            name='email'
                             type='text'
+                            inputEmail
+                            errorEmail={errorEmail}
+                            setErrorEmail={setErrorEmail}
                         />
                     </div>
                     <div className='col-span-6'>
@@ -53,13 +130,13 @@ export default function Register() {
                             classNameError='text-red-500 text-[14px] mt-1 min-h-[20px]'
                             classNameInput='w-full outline-none border-[1px] border-[#ebebeb] rounded-[4px] py-[9px] px-4 placeholder:text-[15px] focus:border-blue-400 transition duration-300 ease-in text-[15px] text-[#555d6b] mt-2'
                             label='Mật khẩu'
-                            // register={register}
-                            // errorMessage={errors.name?.message}
-                            // name='name'
+                            register={register}
+                            errorMessage={errors.password?.message}
+                            name='password'
                             type='text'
                         />
                     </div>
-                    <div className='col-span-6'>
+                    <div className='col-span-6 mt-2'>
                         <div className='flex items-center gap-6'>
                             <Button
                                 className={classNames(
@@ -69,7 +146,7 @@ export default function Register() {
                                         //     updateCartMutation.isPending
                                     }
                                 )}
-                                // onClick={handleUpdate}
+                                // onClick={onClick}
                                 // isLoading={updateCartMutation.isPending}
                                 // disabled={updateCartMutation.isPending}
                             >

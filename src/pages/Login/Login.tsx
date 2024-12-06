@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import BreadCrumb from '~/components/BreadCrumb'
 import Button from '~/components/Button'
@@ -7,8 +7,66 @@ import Input from '~/components/Input'
 import { breadCrumb } from '~/constants/breadCrumb'
 import { path } from '~/constants/path'
 import ForgotPassword from '../ForgotPassword'
+import { schema, Schema } from '~/utils/rules'
+import { useContext, useState } from 'react'
+import { AppContext } from '~/contexts/app.context'
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useQuery } from '@tanstack/react-query'
+import { authApi } from '~/apis/auth.api'
+import { toastNotify } from '~/constants/toastNotify'
+import { setLoginSuccess, setProfileFromLS } from '~/utils/auth'
+import { toast } from 'react-toastify'
 
+type FormData = Pick<Schema, 'email' | 'password'>
+const loginSchema = schema.pick(['email', 'password'])
 export default function Login() {
+    const { setIsAuthenticated, setProfile } = useContext(AppContext)
+    const [errorEmail, setErrorEmail] = useState<string>('')
+    const [errorPassword, setErrorPassword] = useState<string>('')
+    const {
+        register,
+        reset,
+        handleSubmit,
+        formState: { errors }
+    } = useForm<FormData>({
+        defaultValues: {
+            email: '',
+            password: ''
+        },
+        resolver: yupResolver(loginSchema)
+    })
+
+    const navigate = useNavigate()
+    const { data: dataUser } = useQuery({
+        queryKey: ['user'],
+        queryFn: () => authApi.login()
+    })
+
+    const onSubmit = handleSubmit((data) => {
+        const { email, password } = data
+        const findUser = dataUser?.data.find((user) => user.email === email)
+        const comparePassword = findUser?.password === password
+        if (!findUser) {
+            if (errorPassword) {
+                setErrorPassword('')
+            }
+            setErrorEmail(toastNotify.login.emailError)
+            return
+        }
+        if (!comparePassword) {
+            setErrorPassword(toastNotify.login.passwordError)
+            return
+        }
+        setLoginSuccess(findUser.username)
+        setProfileFromLS(findUser)
+        setIsAuthenticated(true)
+        setProfile(findUser)
+        reset()
+        navigate(path.home)
+        toast.success(toastNotify.login.loginSuccess, { autoClose: 2000 })
+    })
+
     return (
         <div className='pb-[100px]'>
             <BreadCrumb title={breadCrumb.login.title} />
@@ -18,24 +76,27 @@ export default function Login() {
 
                 <div className='grid grid-cols-12 mt-4 gap-9'>
                     <div className='col-span-6'>
-                        <form className=''>
+                        <form className='' onSubmit={onSubmit}>
                             <Input
                                 classNameError='text-red-500 text-[14px] mt-1 min-h-[20px]'
                                 classNameInput='w-full outline-none border-[1px] border-[#ebebeb] rounded-[4px] py-[9px] px-4 placeholder:text-[15px] placeholder:text-black focus:border-blue-400 transition duration-300 ease-in text-[15px] text-[#555d6b] mt-2'
                                 label='Email'
-                                // register={register}
-                                // errorMessage={errors.name?.message}
-                                // name='name'
+                                register={register}
+                                errorMessage={errors.email?.message}
+                                name='email'
                                 type='text'
                                 placeholder='Email'
+                                errorEmail={errorEmail}
+                                inputEmail
+                                setErrorEmail={setErrorEmail}
                             />
                             <Input
                                 classNameError='text-red-500 text-[14px] mt-1 min-h-[20px]'
                                 classNameInput='w-full outline-none border-[1px] border-[#ebebeb] rounded-[4px] py-[9px] px-4 placeholder:text-[15px] placeholder:text-black focus:border-blue-400 transition duration-300 ease-in text-[15px] text-[#555d6b] mt-2'
                                 label='Mật khẩu'
-                                // register={register}
-                                // errorMessage={errors.name?.message}
-                                // name='name'
+                                register={register}
+                                errorMessage={errors.password?.message}
+                                name='password'
                                 type='text'
                                 placeholder='Mật khẩu'
                             />
