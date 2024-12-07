@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import classNames from 'classnames'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -11,13 +11,11 @@ import Button from '~/components/Button'
 import Input from '~/components/Input'
 import { path } from '~/constants/path'
 import { toastNotify } from '~/constants/toastNotify'
-import { AppContext } from '~/contexts/createContext'
 import { schema, Schema } from '~/utils/rules'
 
 type FormData = Pick<Schema, 'email' | 'password'>
 const forgotPasswordSchema = schema.pick(['email', 'password'])
 export default function ForgotPassword() {
-    const { profile } = useContext(AppContext)
     const [isEmail, setIsEmail] = useState<boolean>(false)
     const [count, setCount] = useState<number>(0)
     const [errorEmail, setErrorEmail] = useState<string>('')
@@ -90,7 +88,8 @@ export default function ForgotPassword() {
 
     const handleOpenPassword = () => {
         const inputEmail = getValues('email')
-        if (inputEmail === profile?.email) {
+        const findUser = dataUser?.data.find((user) => user.email === inputEmail)
+        if (findUser) {
             setIsEmail(true)
             if (count >= 2) {
                 setCount(2)
