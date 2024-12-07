@@ -11,7 +11,7 @@ import Button from '~/components/Button'
 import Input from '~/components/Input'
 import { path } from '~/constants/path'
 import { toastNotify } from '~/constants/toastNotify'
-import { AppContext } from '~/contexts/app.context'
+import { AppContext } from '~/contexts/createContext'
 import { schema, Schema } from '~/utils/rules'
 
 type FormData = Pick<Schema, 'email' | 'password'>

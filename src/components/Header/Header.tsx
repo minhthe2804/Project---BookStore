@@ -8,9 +8,23 @@ import { navbar } from '~/constants/navbar'
 import { Link } from 'react-router-dom'
 import { path } from '~/constants/path'
 import Button from '../Button'
+import { useContext } from 'react'
+import { AppContext } from '~/contexts/createContext'
+import { clearLS } from '~/utils/auth'
+import { toast } from 'react-toastify'
+import { toastNotify } from '~/constants/toastNotify'
 
 const cx = classname.bind(styles)
 export default function Header() {
+    const { isAuthenticated, setIsAuthenticated, setProfile } = useContext(AppContext)
+
+    const handleLogout = () => {
+        clearLS()
+        setIsAuthenticated(false)
+        setProfile(null)
+        toast.success(toastNotify.logOut.logOutSuccess, { autoClose: 2000 })
+    }
+
     return (
         <div className=' bg-[#f3763a]'>
             <div className='max-w-[1142px] mx-auto'>
@@ -212,16 +226,34 @@ export default function Header() {
                         ))}
                     </ul>
                     <div className='ml-auto'>
-                        <div className='flex items-center gap-2 text-white'>
-                            <Link to={path.register} className='flex items-center gap-1 text-white text-[14px]'>
-                                <FontAwesomeIcon icon={faUser} className='text-[14px]' />
-                                <p className='text-[14px]'>Đăng Ký</p>
-                            </Link>
-                            <p>/</p>
-                            <Link to={path.login} className='flex items-center gap-1 text-white text-[14px]'>
-                                <p>Đăng Nhập</p>
-                            </Link>
-                        </div>
+                        {!isAuthenticated && (
+                            <div className='flex items-center gap-2 text-white'>
+                                <Link to={path.register} className='flex items-center gap-1 text-white text-[14px]'>
+                                    <FontAwesomeIcon icon={faUser} className='text-[14px]' />
+                                    <p className='text-[14px]'>Đăng Ký</p>
+                                </Link>
+                                <p>/</p>
+                                <Link to={path.login} className='flex items-center gap-1 text-white text-[14px]'>
+                                    <p>Đăng Nhập</p>
+                                </Link>
+                            </div>
+                        )}
+
+                        {isAuthenticated && (
+                            <div className='flex items-center gap-2 text-white'>
+                                <Link to={path.home} className='flex items-center gap-1 text-white text-[14px]'>
+                                    <FontAwesomeIcon icon={faUser} className='text-[14px]' />
+                                    <p className='text-[14px]'>Tài khoản</p>
+                                </Link>
+                                <p>/</p>
+                                <p
+                                    className='flex items-center gap-1 text-white text-[14px] cursor-pointer'
+                                    onClick={handleLogout}
+                                >
+                                    Đăng xuất
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </nav>
             </div>

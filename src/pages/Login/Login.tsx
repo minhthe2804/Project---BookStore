@@ -1,5 +1,9 @@
 import classNames from 'classnames'
 import { Link, useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useQuery } from '@tanstack/react-query'
+import { toast } from 'react-toastify'
 
 import BreadCrumb from '~/components/BreadCrumb'
 import Button from '~/components/Button'
@@ -9,14 +13,11 @@ import { path } from '~/constants/path'
 import ForgotPassword from '../ForgotPassword'
 import { schema, Schema } from '~/utils/rules'
 import { useContext, useState } from 'react'
-import { AppContext } from '~/contexts/app.context'
-import { useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { useQuery } from '@tanstack/react-query'
+import { AppContext } from '~/contexts/createContext'
 import { authApi } from '~/apis/auth.api'
 import { toastNotify } from '~/constants/toastNotify'
 import { setLoginSuccess, setProfileFromLS } from '~/utils/auth'
-import { toast } from 'react-toastify'
+
 
 type FormData = Pick<Schema, 'email' | 'password'>
 const loginSchema = schema.pick(['email', 'password'])
@@ -99,6 +100,9 @@ export default function Login() {
                                 name='password'
                                 type='text'
                                 placeholder='Mật khẩu'
+                                errorPassword={errorPassword}
+                                inputPassword
+                                setErrorPassword={setErrorPassword}
                             />
                             <div className='flex items-center gap-6'>
                                 <Button
