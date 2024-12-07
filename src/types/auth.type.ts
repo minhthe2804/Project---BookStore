@@ -7,5 +7,6 @@ export interface Auth {
     username: string
     email: string
     password: string
+    createdAt?: string
+    updateAt?: string
 }
-

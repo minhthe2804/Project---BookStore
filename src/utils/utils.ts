@@ -63,3 +63,11 @@ export function getLastPart(str: string) {
 export const generateCartId = () => {
     return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
 }
+
+export function generateCreatedAt() {
+    return `${new Date().toISOString()}`
+}
+
+export function generateUpdatedAt() {
+    return `${new Date().toISOString()}`
+}

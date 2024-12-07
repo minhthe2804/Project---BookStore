@@ -14,7 +14,7 @@ import { path } from '~/constants/path'
 import { Schema, schema } from '~/utils/rules'
 import { authApi } from '~/apis/auth.api'
 import { toastNotify } from '~/constants/toastNotify'
-
+import { generateCreatedAt } from '~/utils/utils'
 
 type FormData = Pick<Schema, 'lastname' | 'name' | 'email' | 'password'>
 const registerSchema = schema.pick(['lastname', 'name', 'email', 'password'])
@@ -42,10 +42,11 @@ export default function Register() {
             username: string
             email: string
             password: string
+            createdAt: string
         }) => authApi.register(body)
     })
 
-    const { data: dataUser } = useQuery({
+    const { data: dataUser, refetch } = useQuery({
         queryKey: ['user'],
         queryFn: () => authApi.registerAcount()
     })
@@ -67,13 +68,15 @@ export default function Register() {
                 firstname: name,
                 lastname
             },
-            username: name + lastname,
+            username: lastname + name,
             email,
-            password
+            password,
+            createdAt: generateCreatedAt()
         }
         regiterMutation.mutate(registerAccount, {
             onSuccess: (data) => {
                 console.log(data)
+                refetch()
                 reset()
                 toast.success(toastNotify.register.registerSuccess, { autoClose: 2000 })
                 navigate(path.login)
