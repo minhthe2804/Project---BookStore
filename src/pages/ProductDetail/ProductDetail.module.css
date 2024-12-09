@@ -1,0 +1,16 @@
+.btn-buynow:hover {
+    background-color: white;
+    border-color: #f16325;
+    color: #f16325;
+}
+
+.btn-addtocart:hover {
+    background-color: white;
+    border-color: #f16325;
+}
+
+.btn-addtocart:hover .icon-bagshopping {
+    color: #f16325;
+   
+}
+

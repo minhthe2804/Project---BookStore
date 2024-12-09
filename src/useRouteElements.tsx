@@ -14,6 +14,7 @@ import Login from './pages/Login'
 import ForgotPassword from './pages/ForgotPassword'
 
 import { AppContext } from './contexts/createContext'
+import ProductDetail from './pages/ProductDetail'
 
 function ProtectedRoute() {
     const { isAuthenticated } = useContext(AppContext)
@@ -97,6 +98,14 @@ export default function useRouteElements() {
                     )
                 }
             ]
+        },
+        {
+            path: path.productDetail,
+            element: (
+                <MainLayout>
+                    <ProductDetail />
+                </MainLayout>
+            )
         }
     ])
     return routeElements

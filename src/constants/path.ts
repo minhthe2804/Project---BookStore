@@ -7,5 +7,7 @@ export const path = {
     register: '/register',
     login: '/login',
     forgotPassword: '/forgotpassword',
-    changePassword: "/changepassword"
+    changePassword: '/changepassword',
+    cart: '/cart',
+    productDetail: ':nameId'
 }
