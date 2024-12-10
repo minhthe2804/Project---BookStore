@@ -1,13 +1,20 @@
 export const path = {
     home: '/',
-    introduce: '/introduce',
-    collection: '/collections',
-    news: '/news',
-    contact: '/contact',
     register: '/register',
     login: '/login',
-    forgotPassword: '/forgotpassword',
-    changePassword: '/changepassword',
+    forgotPassword: '/forgotPassword',
+    productList: '/productList',
+    news: '/news',
+    introduce: '/introduce',
+    contact: '/contact',
     cart: '/cart',
-    productDetail: ':nameId'
+    productDetail: ':nameId',
+    checkout: '/checkout',
+    checkoutAddress: '/checkout/address',
+    checkoutPayment: '/checkout/payment',
+    checkoutThankYou: '/checkout/thankyou',
+    account: '/account',
+    accountOder: '/account/oder/:nameId',
+    changePassword: '/account/changepassword',
+    updateProfile: '/account/updateprofile'
 }

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { path } from '~/constants/path'
 
 import { Product as ProductType } from '~/types/product.type'
-import { formatCurrency } from '~/utils/utils'
+import { formatCurrency, generateNameId } from '~/utils/utils'
 
 interface Props {
     product: ProductType
@@ -27,18 +27,23 @@ export default function Product({
                 <div
                     className={
                         isFlexColumn
-                            ? 'pl-3 pr-4 border-[1px] border-[#ececec] w-full h-full pb-1'
-                            : 'pl-3 pr-4 border-[1px] border-[#ececec] w-full h-full'
+                            ? 'pl-3 pr-4 border-[1px] border-[#ececec] w-full h-full pb-1 pt-1'
+                            : 'pl-3 pr-4 border-[1px] border-[#ececec] w-full h-full pt-1'
                     }
                 >
-                    <img
-                        src={product.imageUrl}
-                        alt=''
-                        className={`${setWidthImg} ${setHeightImg} object-cover cursor-pointer`}
-                    />
+                    <Link to={`${path.home}${generateNameId({ name: product.title, id: product.id })}`}>
+                        <img
+                            src={product.imageUrl}
+                            alt=''
+                            className={`${setWidthImg} ${setHeightImg} object-cover cursor-pointer`}
+                        />
+                    </Link>
                     {isFlexColumn && (
                         <div className='text-[14px] text-[#555555] truncate group'>
-                            <Link to={path.home} className='group-hover:text-[#f16325] transtion duration-200 ease-in'>
+                            <Link
+                                to={`${path.home}${generateNameId({ name: product.title, id: product.id })}`}
+                                className='group-hover:text-[#f16325] transtion duration-200 ease-in'
+                            >
                                 {product.title}
                             </Link>
                         </div>
@@ -46,7 +51,10 @@ export default function Product({
 
                     {!isFlexColumn && (
                         <div className='text-[14px] text-[#555555] truncate group mt-3'>
-                            <Link to={path.home} className='group-hover:text-[#f16325] transtion duration-200 ease-in'>
+                            <Link
+                                to={`${path.home}${generateNameId({ name: product.title, id: product.id })}`}
+                                className='group-hover:text-[#f16325] transtion duration-200 ease-in'
+                            >
                                 {product.title}
                             </Link>
                         </div>
@@ -99,17 +107,23 @@ export default function Product({
 
             {productCategory && (
                 <div className='w-full h-full flex gap-2'>
-                    <figure className='border-[1px] border-[#ebebeb] w-[30%] py-1 flex items-center justify-center'>
+                    <Link
+                        to={`${path.home}${generateNameId({ name: product.title, id: product.id })}`}
+                        className='border-[1px] border-[#ebebeb] w-[30%] py-1 flex items-center justify-center px-1 min-h-[100px]'
+                    >
                         <img
                             src={product.imageUrl}
                             alt=''
                             className={`${setWidthImg} ${setHeightImg} object-cover cursor-pointer`}
                         />
-                    </figure>
+                    </Link>
 
                     <div className='flex flex-col w-[70%] pr-2'>
                         <div className='text-[14px] text-[#555555] overflow-ellipsis overflow-hidden line-clamp-2 group mt-3 w-full'>
-                            <Link to={path.home} className='group-hover:text-[#f16325] transtion duration-200 ease-in'>
+                            <Link
+                                to={`${path.home}${generateNameId({ name: product.title, id: product.id })}`}
+                                className='group-hover:text-[#f16325] transtion duration-200 ease-in'
+                            >
                                 {product.title}
                             </Link>
                         </div>

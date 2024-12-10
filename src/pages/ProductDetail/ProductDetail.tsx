@@ -1,43 +1,287 @@
+import { useContext, useMemo, useRef, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useNavigate, useParams } from 'react-router-dom'
 import classNames from 'classnames/bind'
+import { faBook } from '@fortawesome/free-solid-svg-icons'
+import { toast } from 'react-toastify'
 
 import styles from './ProductDetail.module.css'
 import BreadCrumb from '~/components/BreadCrumb'
 import Button from '~/components/Button'
 import QuantityController from '~/components/QuantityController'
 import TitleModule from '~/components/TitleModule'
-import { faBook } from '@fortawesome/free-solid-svg-icons'
 import Help from '~/components/Help'
 import Policy from '~/components/Policy'
 import productApi from '~/apis/product.api'
-import { useMemo } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import Product from '~/components/Product'
+import { ProductsConfig } from '~/types/product.type'
+import { formatCurrency, formatDate, getIdFromNameId } from '~/utils/utils'
+import { AppContext } from '~/contexts/createContext'
+import { CartType } from '~/types/cart.type'
+import { cartApi } from '~/apis/cart.api'
+import { toastNotify } from '~/constants/toastNotify'
+import { path } from '~/constants/path'
+import { checkoutApi } from '~/apis/checkout.api'
+import { setCheckoutFromLS } from '~/utils/auth'
 
 const cx = classNames.bind(styles)
 export default function ProductDetail() {
-    const { data: productListData, isFetching } = useQuery({
-        queryKey: ['product'],
-        queryFn: () => productApi.getProductList()
+    const [buyCount, setByCount] = useState<number>(1)
+    const { nameId } = useParams() // lấy param để tiến hành gọi api sản phẩm
+    const imageRef = useRef<HTMLImageElement>(null) // sử dụng để lấy Dom của bức ảnh thực hiện chức năng Zoom
+    const [zoomImage, setZoomImage] = useState<boolean>(false) //
+    const id = getIdFromNameId(nameId as string) // thực hiện loại bỏ những thành phần không cần thiết chỉ lấy mỗi id
+    const queryClient = useQueryClient() // để cập nhật được data mới nhất
+    const { isAuthenticated, setIsCheckout } = useContext(AppContext)
+
+    const navigate = useNavigate() // dùng để chuyển route
+    // gọi api xem chi tiết sản phẩm
+    const { data: productDetail } = useQuery({
+        queryKey: ['productDetail', id],
+        queryFn: () => productApi.getProductDetail(id)
     })
 
-    const productDataComic = useMemo(
-        () => productListData?.data.filter((product) => product.category === 'Truyện Tranh'),
-        [productListData?.data]
+    const productData = productDetail?.data // truy xuất đến data thật
+    const queryConfig: ProductsConfig = { category: productData?.category } // custom queryconfig chỉ lấy category dựa theo sản phẩm đang xem chi tiết
+
+    // gọi api sản phẩm tương tự cùng category
+    const { data: productCategoryData, isFetching } = useQuery({
+        queryKey: ['product', queryConfig],
+        queryFn: () => productApi.getProduct(queryConfig)
+    })
+
+    const productCategory = productCategoryData?.data // truy xuất đến mảng đang chứa các sản phẩm để lặp và render ra giao diện
+
+    // loại bỏ sản phẩm đang xem chi tiết ở sản phẩm tương tự
+    const removeProductDetail = useMemo(() => {
+        return productCategory?.filter((product) => product.id !== productData?.id)
+    }, [productCategory, productData?.id])
+
+    // goi api lấy tất cả sản phẩm trong giỏ hàng
+    const { data: productInCartData } = useQuery({
+        queryKey: ['cart'],
+        queryFn: () => cartApi.getCart()
+    })
+
+    const productToCart = productInCartData?.data // truy xuất đến mảng đang chứa các sản phẩm để lặp và render ra giao diện
+
+    // goi api Cart de them san pham vao gio hang
+    const addToCartMutation = useMutation({
+        mutationFn: (body: CartType) => cartApi.addToCart(body)
+    })
+
+    // gọi api để cập nhật sản phẩm nếu đã có sản phẩm trong giỏ hàng thì tăng số lượng lên chứ không thêm sản phẩm mới
+    const updateCartMutation = useMutation({
+        mutationFn: (bodyData: { id: string; body: CartType }) => cartApi.updateCart(bodyData.id, bodyData.body)
+    })
+
+    // tìm kiếm sản phẩm chuẩn bị thêm vào giỏ hàng nhưng đã có trước đó trong giỏ hàng và để cập nhật sản phẩm này trong giỏ hàng
+    const existingProductByIdInCart = useMemo(
+        () => productToCart?.find((cart) => cart.id === productData?.id),
+        [productData?.id, productToCart]
     )
+
+    // goi api lấy tất cả sản phẩm trong checkout
+    const { data: productCheckoutInData, refetch } = useQuery({
+        queryKey: ['checkout'],
+        queryFn: () => checkoutApi.getCheckout()
+    })
+
+    const productCheckout = productCheckoutInData?.data // truy xuất đến mảng đang chứa các sản phẩm để lặp và render ra giao diện
+
+    // goi api checkout de them san pham vao checkout
+    const addProductToCheckout = useMutation({
+        mutationFn: (body: CartType) => checkoutApi.addCheckout(body)
+    })
+
+    // gọi api để cập nhật sản phẩm nếu đã có sản phẩm trong checkout thì tăng số lượng lên chứ không thêm sản phẩm mới
+    const updateCheckoutMutation = useMutation({
+        mutationFn: (bodyData: { id: string; body: CartType }) =>
+            checkoutApi.updateProducttoCheckout(bodyData.id, bodyData.body)
+    })
+
+    // tìm kiếm sản phẩm chuẩn bị thêm vào checkout nhưng đã có trước đó trong checkout và để cập nhật sản phẩm này trong checkout
+    const existingProductByIdInCheckout = useMemo(
+        () => productCheckout?.find((checkout) => checkout.id === productData?.id),
+        [productCheckout, productData?.id]
+    )
+
+    // Thực hiện logic zoom
+    const handleZoom = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        setZoomImage(true)
+        const rect = event.currentTarget.getBoundingClientRect()
+        const image = imageRef.current as HTMLImageElement
+        const { naturalWidth, naturalHeight } = image
+        // Cách 1: Lấy offsetX, offsetY đơn giản khi chúng ta đã xử lý được bubble event
+        const { offsetX, offsetY } = event.nativeEvent
+
+        // Cách 2: Lấy offsetX, offsetY khi chúng ta không xử lý được bubble event
+        // const offsetX = event.pageX - (rect.x + window.scrollX)
+        // const offsetY = event.pageY - (rect.y + window.scrollY)
+
+        const top = offsetY * (1 - naturalHeight / rect.height)
+        const left = offsetX * (1 - naturalWidth / rect.width)
+        image.style.width = naturalWidth + 'px'
+        image.style.height = naturalHeight + 'px'
+        image.style.maxWidth = 'unset'
+        image.style.top = top + 'px'
+        image.style.left = left + 'px'
+    }
+
+    // khi không zoom nữa chả về thuộc tính ban đầu
+    const handleRemoveZoom = () => {
+        imageRef.current?.removeAttribute('style')
+        setZoomImage(false)
+    }
+
+    // tăng số lượng sản phẩm
+    const handleBuyCount = (value: number) => {
+        setByCount(value)
+    }
+
+    // Lấy ra id của sản phẩm trong giỏ hàng
+    const getIdProductSameToCart = useMemo(() => {
+        return productToCart?.map((cart) => cart.id)
+    }, [productToCart])
+
+    //  kiểm tra từ id productData?.id xem đã có sản phẩm trong giỏ hàng chưa
+    const checkIdProductSameToCart = () => {
+        return getIdProductSameToCart?.includes(productData?.id as string)
+    }
+
+    // Lấy ra id của sản phẩm trong checkout
+    const getIdProductSameToCheckout = useMemo(() => {
+        return productCheckout?.map((checkout) => checkout.id)
+    }, [productCheckout])
+
+    //  kiểm tra từ id productData?.id xem đã có sản phẩm trong giỏ hàng chưa
+    const checkIdProductSameToCheckout = () => {
+        return getIdProductSameToCheckout?.includes(productData?.id as string)
+    }
+
+    // Thêm sản phẩm vào giỏ hàng
+    const addToCart = () => {
+        if (isAuthenticated) {
+            if (productData) {
+                if (!checkIdProductSameToCart()) {
+                    addToCartMutation.mutate(
+                        {
+                            id: productData.id,
+                            title: productData.title,
+                            imageUrl: productData.imageUrl,
+                            count: buyCount,
+                            price: productData.price,
+                            totalPrice: productData.price * buyCount,
+                            stock: productData.stock
+                        },
+                        {
+                            onSuccess: () => {
+                                toast.success(toastNotify.productDetail.addtoCartSuccess, { autoClose: 2000 })
+                                queryClient.invalidateQueries({ queryKey: ['cart'] })
+                            }
+                        }
+                    )
+                    return
+                }
+                updateCartMutation.mutate(
+                    {
+                        id: existingProductByIdInCart?.id as string,
+                        body: {
+                            ...existingProductByIdInCart,
+                            count:
+                                (existingProductByIdInCart?.count as number) + buyCount > productData.stock
+                                    ? productData.stock
+                                    : (existingProductByIdInCart?.count as number) + buyCount,
+                            totalPrice:
+                                ((existingProductByIdInCart?.count as number) + buyCount) *
+                                (existingProductByIdInCart?.price as number)
+                        } as CartType
+                    },
+                    {
+                        onSuccess: () => {
+                            toast.success(toastNotify.productDetail.addtoCartSuccess, { autoClose: 2000 })
+                            queryClient.invalidateQueries({ queryKey: ['cart'] })
+                        }
+                    }
+                )
+            }
+            return
+        }
+        navigate(path.login)
+    }
+
+    // Mua ngay sản phẩm chuyển đến phần checkout
+    const buyNow = () => {
+        if (isAuthenticated) {
+            if (productData) {
+                if (!checkIdProductSameToCheckout()) {
+                    addProductToCheckout.mutate({
+                        id: productData.id,
+                        title: productData.title,
+                        imageUrl: productData.imageUrl,
+                        count: buyCount,
+                        price: productData.price,
+                        totalPrice: productData.price * buyCount,
+                        stock: productData.stock
+                    })
+                    setCheckoutFromLS('ok')
+                    setIsCheckout(true)
+                    navigate(path.checkout)
+                    return
+                }
+                updateCheckoutMutation.mutate(
+                    {
+                        id: existingProductByIdInCheckout?.id as string,
+                        body: {
+                            ...existingProductByIdInCheckout,
+                            count:
+                                (existingProductByIdInCheckout?.count as number) + buyCount > productData.stock
+                                    ? productData.stock
+                                    : (existingProductByIdInCheckout?.count as number) + buyCount,
+                            totalPrice:
+                                ((existingProductByIdInCheckout?.count as number) + buyCount) *
+                                (existingProductByIdInCheckout?.price as number)
+                        } as CartType
+                    },
+                    {
+                        onSuccess: () => {
+                            refetch()
+                        }
+                    }
+                )
+                setCheckoutFromLS('ok')
+                setIsCheckout(true)
+                navigate(path.checkout)
+            }
+            return
+        }
+        navigate(path.login)
+    }
 
     return (
         <div className=''>
-            <BreadCrumb title='Sách Bán Chạy' titleProduct='100 bài tập yoga sau sinh giúp mẹ đẹp con khoẻ' />
+            <BreadCrumb title={productData?.category} titleProduct={productData?.title} />
             <div className='max-w-[1142px] mx-auto'>
-                <h1 className='text-[22px] text-[#555555] mt-4'>100 bài tập yoga sau sinh giúp mẹ đẹp con khoẻ</h1>
+                <h1 className='text-[22px] text-[#555555] mt-4'>{productData?.title}</h1>
                 <div className='grid grid-cols-12 gap-[32px] mt-2'>
                     <div className='col-span-5'>
-                        <div className='flex items-center justify-center border-[1px] border-[#ebebeb] w-[424px] h-[398px]'>
-                            <figure className='relative w-[278px] h-full overflow-hidden cursor-zoom-in'>
+                        <div
+                            className='flex items-center justify-center border-[1px] border-[#ebebeb] w-[424px] h-[398px]'
+                            onMouseMove={handleZoom}
+                            onMouseLeave={handleRemoveZoom}
+                        >
+                            <figure
+                                className={
+                                    zoomImage
+                                        ? 'relative w-full h-full overflow-hidden cursor-zoom-in'
+                                        : 'relative w-[278px] h-[360px] overflow-hidden cursor-zoom-in'
+                                }
+                            >
                                 <img
-                                    src='https://product.hstatic.net/200000612501/product/100_bai_tap_yoga_sau_sinh_giup_me_dep_con_khoe_b6b7ad54e1284d18b9b1750e9d833cdb_large.jpg'
+                                    src={productData?.featured_image}
                                     alt=''
                                     className='pointer-events-none absolute top-0 left-0 w-full h-full object-cover'
+                                    ref={imageRef}
                                 />
                             </figure>
                         </div>
@@ -47,19 +291,19 @@ export default function ProductDetail() {
                             <div className='flex items-center gap-3 text-[14px]'>
                                 <p className='text-[#6a6a6a] font-bold w-[99px] '>Tác giả</p>
                                 <div className='w-[13px] h-[1px] rotate-90 bg-[#ebebeb]'></div>
-                                <p className='text-[#898989]'>Luc Dopont</p>
+                                <p className='text-[#898989]'>{productData?.author}</p>
                             </div>
 
                             <div className='flex items-center gap-3 text-[14px]'>
                                 <p className='text-[#6a6a6a] font-bold w-[99px] '>Nhà xuất bản</p>
                                 <div className='w-[13px] h-[1px] rotate-90 bg-[#ebebeb]'></div>
-                                <p className='text-[#898989]'>Luc Dopont</p>
+                                <p className='text-[#898989]'>{productData?.publisher}</p>
                             </div>
 
                             <div className='flex items-center gap-3 text-[14px]'>
                                 <p className='text-[#6a6a6a] font-bold w-[99px]'>Ngày xuất bản</p>
                                 <div className='w-[13px] h-[1px] rotate-90 bg-[#ebebeb]'></div>
-                                <p className='text-[#898989]'>12/12/2024</p>
+                                <p className='text-[#898989]'>{formatDate(productData?.published_at as string)}</p>
                             </div>
 
                             <div className='flex items-center gap-3 text-[14px]'>
@@ -69,24 +313,19 @@ export default function ProductDetail() {
                             </div>
 
                             <div className='flex items-center gap-5 mt-3'>
-                                <p className='text-[29px] text-[#f16325] font-semibold '>39,000₫</p>
-                                <p className='text-[#acacac] text-[21px] line-through'>96,000₫</p>
+                                <p className='text-[29px] text-[#f16325] font-semibold '>
+                                    {formatCurrency(productData?.price_discount as number)}
+                                </p>
+                                <p className='text-[#acacac] text-[21px] line-through'>
+                                    {' '}
+                                    {formatCurrency(productData?.price as number)}
+                                </p>
                             </div>
 
                             <div className='w-full h-[1px] bg-[#ebebeb] mt-4'></div>
 
                             <div className='text-[14px] text-[#555555] overflow-ellipsis overflow-hidden line-clamp-4 mt-4'>
-                                <p className=''>
-                                    Cuốn sách '1001 Ý Tưởng Đột Phá Trong Quảng Cáo' của Luc Dopont là một hướng dẫn
-                                    toàn diện dành cho các nhà tiếp thị và sáng tạo quảng cáo. Sách tập trung vào việc
-                                    cung cấp những ý tưởng thực tiễn, từ cách thiết kế thông điệp, lựa chọn hình ảnh,
-                                    đến việc tối ưu hóa hiệu quả truyền thông. Được viết dựa trên kinh nghiệm thực tế,
-                                    sách giải thích chi tiết những gì nên và không nên làm trong quảng cáo, đồng thời
-                                    cung cấp nhiều ví dụ minh họa cụ thể và các bài học từ các chiến dịch nổi tiếng. Đây
-                                    là tài liệu không thể thiếu dành cho những ai mong muốn đạt được sự đột phá trong
-                                    các chiến lược tiếp thị, phù hợp cho cả người mới bắt đầu lẫn những chuyên gia muốn
-                                    nâng cao kỹ năng.
-                                </p>
+                                <p className=''>{productData?.description}</p>
                             </div>
 
                             <div className='w-full h-[1px] bg-[#ebebeb] mt-4'></div>
@@ -98,6 +337,11 @@ export default function ProductDetail() {
                                     setHeightInput='py-[11px]'
                                     setHeightBtn='py-[22px]'
                                     setWidthBtn='w-10'
+                                    onDecrease={handleBuyCount}
+                                    onIncrease={handleBuyCount}
+                                    onType={handleBuyCount}
+                                    value={buyCount}
+                                    max={productData?.stock}
                                 />
                                 <div className='flex items-center gap-2'>
                                     <button
@@ -107,6 +351,7 @@ export default function ProductDetail() {
                                                 'btn-addtocart': true
                                             }
                                         )}
+                                        onClick={addToCart}
                                     >
                                         <svg
                                             xmlns='http://www.w3.org/2000/svg'
@@ -134,7 +379,7 @@ export default function ProductDetail() {
                                                 'btn-buynow': true
                                             }
                                         )}
-                                        // onClick={buyNow}
+                                        onClick={buyNow}
                                         // isLoading={addToCartMutation.isPending}
                                         // disabled={addToCartMutation.isPending}
                                     >
@@ -150,10 +395,15 @@ export default function ProductDetail() {
                 </div>
 
                 <div className='grid grid-cols-12 mt-2 gap-3'>
-                    {productDataComic &&
-                        productDataComic.map((product) => (
+                    {removeProductDetail &&
+                        removeProductDetail.map((product) => (
                             <div className='col-span-3' key={product.id}>
-                                <Product product={product} setWidthImg='w-[90px]' setHeightImg='' productCategory/>
+                                <Product
+                                    product={product}
+                                    setWidthImg='w-[90px]'
+                                    setHeightImg='h-[90px]'
+                                    productCategory
+                                />
                             </div>
                         ))}
                 </div>

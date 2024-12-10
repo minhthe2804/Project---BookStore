@@ -71,3 +71,16 @@ export function generateCreatedAt() {
 export function generateUpdatedAt() {
     return `${new Date().toISOString()}`
 }
+
+export function formatDate(isoString: string) {
+    // Tạo đối tượng Date từ chuỗi ISO
+    const date = new Date(isoString)
+
+    // Trích xuất ngày, tháng, năm
+    const day = date.getUTCDate()
+    const month = date.getUTCMonth() + 1 // Tháng bắt đầu từ 0 nên cần +1
+    const year = date.getUTCFullYear()
+
+    // Trả về chuỗi ngày/tháng/năm
+    return `${day}/${month}/${year}`
+}

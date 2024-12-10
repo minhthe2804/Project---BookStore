@@ -16,3 +16,6 @@ export interface Product {
     created_at: string
 }
 
+export interface ProductsConfig {
+    category?: string
+}

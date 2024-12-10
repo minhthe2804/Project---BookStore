@@ -1,13 +1,11 @@
 export interface CartType {
     id: string
-    previewImage: string
     title: string
-    version: string
+    imageUrl: string
     price: number
     totalPrice: number
     count: number
-    vendor: string
-    quantity: number
+    stock: number
 }
 
 export interface ExtendedCart extends CartType {

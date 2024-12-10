@@ -9,7 +9,7 @@ import { path } from '~/constants/path'
 import styles from './BestSelling.module.css'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import productApi from '~/apis/product.api'
-import { formatCurrency } from '~/utils/utils'
+import { formatCurrency, generateNameId } from '~/utils/utils'
 import { titleModule } from '~/constants/titleModule'
 
 const cx = classNames.bind(styles)
@@ -86,17 +86,19 @@ export default function BestSelling() {
                     {productDataBestSell &&
                         productDataBestSell.map((product) => (
                             <div
-                                className='h-full min-w-[228.5px] pl-3 pr-4 border-r-[1px] border-[#ececec]'
+                                className='h-full min-w-[228.5px] pl-3 pr-4 border-r-[1px] border-[#ececec] pt-1'
                                 key={product.id}
                             >
-                                <img
-                                    src={product.imageUrl}
-                                    alt=''
-                                    className='w-full h-[242px] object-cover cursor-pointer'
-                                />
+                                <Link to={`${path.home}${generateNameId({ name: product.title, id: product.id })}`}>
+                                    <img
+                                        src={product.imageUrl}
+                                        alt=''
+                                        className='w-full h-[242px] object-cover cursor-pointer'
+                                    />
+                                </Link>
                                 <div className='text-[14px] text-[#555555] truncate group mt-3'>
                                     <Link
-                                        to={path.home}
+                                        to={`${path.home}${generateNameId({ name: product.title, id: product.id })}`}
                                         className='group-hover:text-[#f16325] transtion duration-200 ease-in'
                                     >
                                         {product.title}
