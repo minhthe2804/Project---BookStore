@@ -8,6 +8,8 @@ interface Props extends InputNumberProps {
     setHeightBtn?: string
     setHeightInput?: string
     setWidthBtn?: string
+    setWidthIcon?: string
+    setColorIcon?: string
     onIncrease?: (value: number) => void
     onDecrease?: (value: number) => void
     onType?: (value: number) => void
@@ -25,6 +27,8 @@ export default function QuantityController({
     setHeightBtn,
     setHeightInput,
     setWidthBtn,
+    setWidthIcon = 'w-[10px]',
+    setColorIcon = 'bg-[#333333]',
     ...rest
 }: Props) {
     const [localValue, setLocalValue] = useState(Number(value) || 0)
@@ -75,8 +79,10 @@ export default function QuantityController({
 
     return (
         <div className={'flex items-center'}>
-            <Button className={`${setWidthBtn} ${setHeightBtn} border-[1px] ${border} group`} onClick={decrease}>
-                <div className='w-[10px] h-[2px] bg-[#333333] group-hover:bg-[#ff3237] transition duration-200 ease-in'></div>
+            <Button className={`${setWidthBtn} ${setHeightBtn} border-[1px] ${border} group `} onClick={decrease}>
+                <div
+                    className={`${setWidthIcon} h-[2px] ${setColorIcon} group-hover:bg-[#ff3237] transition duration-200 ease-in`}
+                ></div>
             </Button>
             <InputNumber
                 value={value || localValue}
@@ -87,9 +93,13 @@ export default function QuantityController({
                 onBlur={handleBlur}
                 {...rest}
             />
-            <Button className={`${setWidthBtn} ${setHeightBtn} border-[1px] ${border} group`} onClick={increase}>
-                <div className='relative w-[10px] h-[2px] bg-[#333333] group-hover:bg-[#ff3237] transition duration-200 ease-in'></div>
-                <div className='w-[10px] h-[2px] bg-[#333333] rotate-90 absolute group-hover:bg-[#ff3237] transition duration-200 ease-in'></div>
+            <Button className={`${setWidthBtn} ${setHeightBtn} border-[1px] ${border} group `} onClick={increase}>
+                <div
+                    className={`relative ${setWidthIcon} h-[2px] ${setColorIcon} group-hover:bg-[#ff3237] transition duration-200 ease-in`}
+                ></div>
+                <div
+                    className={`${setWidthIcon} h-[2px] ${setColorIcon} rotate-90 absolute group-hover:bg-[#ff3237] transition duration-200 ease-in`}
+                ></div>
             </Button>
         </div>
     )

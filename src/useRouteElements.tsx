@@ -15,6 +15,7 @@ import ForgotPassword from './pages/ForgotPassword'
 
 import { AppContext } from './contexts/createContext'
 import ProductDetail from './pages/ProductDetail'
+import Cart from './pages/Cart'
 
 function ProtectedRoute() {
     const { isAuthenticated } = useContext(AppContext)
@@ -94,6 +95,20 @@ export default function useRouteElements() {
                     element: (
                         <MainLayout>
                             <ForgotPassword />
+                        </MainLayout>
+                    )
+                }
+            ]
+        },
+        {
+            path: '',
+            element: <ProtectedRoute />,
+            children: [
+                {
+                    path: path.cart,
+                    element: (
+                        <MainLayout>
+                            <Cart />
                         </MainLayout>
                     )
                 }

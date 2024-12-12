@@ -3,6 +3,9 @@ export const breadCrumb = {
         title: 'Tạo tài khoản'
     },
     login: {
-        title: "Tài khoản"
+        title: 'Tài khoản'
+    },
+    cart: {
+        title: ' Giỏ hàng của bạn - Vựa Sách Cũ'
     }
 }

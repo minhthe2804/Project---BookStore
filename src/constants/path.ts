@@ -6,6 +6,7 @@ export const path = {
     productList: '/productList',
     news: '/news',
     introduce: '/introduce',
+    collection: '/collection',
     contact: '/contact',
     cart: '/cart',
     productDetail: ':nameId',
