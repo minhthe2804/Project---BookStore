@@ -10,4 +10,5 @@ export interface CartType {
 
 export interface ExtendedCart extends CartType {
     checked: boolean
+    disabled: boolean
 }

@@ -5,7 +5,8 @@ import classname from 'classnames/bind'
 import styles from './Header.module.css'
 import Popover from '../Popover'
 import { navbar } from '~/constants/navbar'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+
 import { path } from '~/constants/path'
 import Button from '../Button'
 import { useContext } from 'react'
@@ -17,7 +18,7 @@ import { toastNotify } from '~/constants/toastNotify'
 const cx = classname.bind(styles)
 export default function Header() {
     const { isAuthenticated, setIsAuthenticated, setProfile } = useContext(AppContext)
-
+    const navigate = useNavigate()
     const handleLogout = () => {
         clearLS()
         setIsAuthenticated(false)
@@ -25,6 +26,13 @@ export default function Header() {
         toast.success(toastNotify.logOut.logOutSuccess, { autoClose: 2000 })
     }
 
+    const navigatePageCart = () => {
+        navigate(path.cart)
+    }
+
+    const navigatePageAccount = () => {
+        navigate(path.account)
+    }
     return (
         <div className=' bg-[#f3763a]'>
             <div className='max-w-[1142px] mx-auto'>
@@ -52,7 +60,7 @@ export default function Header() {
                     </div>
                     <div className='col-span-3 flex justify-end'>
                         <div className='flex items-end gap-3'>
-                            <div className='text-center text-white w-10 py-2 border-[1px] border-[#fff] text-[16px]'>
+                            <div className='text-center text-white w-10 py-2 border-[1px] border-[#fff] text-[16px]' onClick={navigatePageAccount}>
                                 <FontAwesomeIcon icon={faUser} />
                             </div>
                             <Popover
@@ -198,6 +206,7 @@ export default function Header() {
                                     className={cx('flex items-center cursor-pointer relative', {
                                         'blog-cart': true
                                     })}
+                                    onClick={navigatePageCart}
                                 >
                                     <div className='text-center text-white w-10 py-2 border-[1px] border-[#fff] text-[16px] z-[2]'>
                                         <FontAwesomeIcon icon={faBagShopping} />
