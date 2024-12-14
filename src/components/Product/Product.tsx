@@ -1,8 +1,15 @@
 import { faBagShopping } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Link } from 'react-router-dom'
-import { path } from '~/constants/path'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useContext, useMemo } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { cartApi } from '~/apis/cart.api'
 
+import { path } from '~/constants/path'
+import { toastNotify } from '~/constants/toastNotify'
+import { AppContext } from '~/contexts/createContext'
+import { CartType } from '~/types/cart.type'
 import { Product as ProductType } from '~/types/product.type'
 import { formatCurrency, generateNameId } from '~/utils/utils'
 
@@ -21,6 +28,87 @@ export default function Product({
     setWidthImg = 'w-full',
     setHeightImg = 'h-[242px]'
 }: Props) {
+    const { isAuthenticated } = useContext(AppContext)
+
+    const queryClient = useQueryClient()
+    const navigate = useNavigate()
+
+    const { data: productInCartData, refetch } = useQuery({
+        queryKey: ['cart'],
+        queryFn: () => cartApi.getCart()
+    })
+
+    const updateCartMutation = useMutation({
+        mutationFn: (bodyData: { id: string; body: CartType }) => cartApi.updateCart(bodyData.id, bodyData.body)
+    })
+
+    const productToCart = productInCartData?.data
+
+    const checkIdToCart = useMemo(
+        () => productToCart?.find((cart) => cart.id === product.id),
+        [product.id, productToCart]
+    )
+
+    // goi api Cart de them san pham vao gio hang
+    const addToCartMutation = useMutation({
+        mutationFn: (body: CartType) => cartApi.addToCart(body)
+    })
+
+    const checkProductIdToCart = () => {
+        if (productToCart) {
+            const checkProduct = productToCart.some((cart) => cart.id === product.id)
+            return checkProduct
+        }
+    }
+
+    const addToCart = () => {
+        if (isAuthenticated) {
+            if (product) {
+                if (!checkProductIdToCart()) {
+                    addToCartMutation.mutate(
+                        {
+                            id: product.id,
+                            title: product.title,
+                            imageUrl: product.imageUrl,
+                            count: 1,
+                            price: product.price,
+                            totalPrice: product.price * 1,
+                            stock: product.stock
+                        },
+                        {
+                            onSuccess: () => {
+                                toast.success(toastNotify.productDetail.addtoCartSuccess, { autoClose: 2000 })
+                                queryClient.invalidateQueries({ queryKey: ['cart'] })
+                            }
+                        }
+                    )
+                    return
+                }
+                updateCartMutation.mutate(
+                    {
+                        id: checkIdToCart?.id as string,
+                        body: {
+                            ...checkIdToCart,
+                            count:
+                                (checkIdToCart?.count as number) + 1 > product.stock
+                                    ? product.stock
+                                    : (checkIdToCart?.count as number) + 1,
+                            totalPrice: ((checkIdToCart?.count as number) + 1) * (checkIdToCart?.price as number)
+                        } as CartType
+                    },
+                    {
+                        onSuccess: () => {
+                            toast.success(toastNotify.productDetail.addtoCartSuccess, { autoClose: 2000 })
+                            refetch()
+                        }
+                    }
+                )
+            }
+            return
+        }
+        navigate(path.login)
+    }
+    
     return (
         <>
             {!productCategory && (
@@ -76,7 +164,10 @@ export default function Product({
                             </div>
                             <div className='flex items-center'>
                                 <p className='text-[13px] text-[#333333] mt-[1px]'>{`Đã bán ${product.sold}`}</p>
-                                <div className='text-[14px] ml-auto text-[#f16325] border-[1px] border-[#f16325] flex items-center justify-center w-[26px] h-[20px] cursor-pointer'>
+                                <div
+                                    className='text-[14px] ml-auto text-[#f16325] border-[1px] border-[#f16325] flex items-center justify-center w-[26px] h-[20px] cursor-pointer'
+                                    onClick={addToCart}
+                                >
                                     <FontAwesomeIcon icon={faBagShopping} />
                                 </div>
                             </div>
@@ -93,7 +184,10 @@ export default function Product({
                                         {formatCurrency(product.price_discount)}
                                     </p>
                                 </div>
-                                <div className='text-[14px] ml-auto text-[#f16325] border-[1px] border-[#f16325] flex items-center justify-center w-[26px] h-[20px] cursor-pointer'>
+                                <div
+                                    className='text-[14px] ml-auto text-[#f16325] border-[1px] border-[#f16325] flex items-center justify-center w-[26px] h-[20px] cursor-pointer'
+                                    onClick={addToCart}
+                                >
                                     <FontAwesomeIcon icon={faBagShopping} />
                                 </div>
                             </div>

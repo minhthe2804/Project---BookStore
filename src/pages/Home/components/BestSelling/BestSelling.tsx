@@ -1,16 +1,21 @@
 import TitleModule from '~/components/TitleModule'
 import { faBagShopping, faBolt, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import classNames from 'classnames/bind'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { path } from '~/constants/path'
 import styles from './BestSelling.module.css'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import productApi from '~/apis/product.api'
 import { formatCurrency, generateNameId } from '~/utils/utils'
 import { titleModule } from '~/constants/titleModule'
+import { AppContext } from '~/contexts/createContext'
+import { CartType } from '~/types/cart.type'
+import { cartApi } from '~/apis/cart.api'
+import { toast } from 'react-toastify'
+import { toastNotify } from '~/constants/toastNotify'
 
 const cx = classNames.bind(styles)
 export default function BestSelling() {
@@ -18,6 +23,9 @@ export default function BestSelling() {
     const slide = useRef<number>(0) // Lưu vị trí cuộn
     const offsetWidth = useRef<number>(0) // Lưu độ rộng của phần tử
     const [count, setCount] = useState<number>(5)
+    const { isAuthenticated } = useContext(AppContext)
+    const queryClient = useQueryClient()
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (slideRef.current) {
@@ -35,6 +43,31 @@ export default function BestSelling() {
         () => productListData?.data.filter((product) => product.sold > 200),
         [productListData?.data]
     )
+
+    const { data: productInCartData, refetch } = useQuery({
+        queryKey: ['cart'],
+        queryFn: () => cartApi.getCart()
+    })
+
+    const updateCartMutation = useMutation({
+        mutationFn: (bodyData: { id: string; body: CartType }) => cartApi.updateCart(bodyData.id, bodyData.body)
+    })
+
+    const productToCart = productInCartData?.data
+
+    // goi api Cart de them san pham vao gio hang
+    const addToCartMutation = useMutation({
+        mutationFn: (body: CartType) => cartApi.addToCart(body)
+    })
+
+    const checkIdToCart = (id: string) => productToCart?.find((cart) => cart.id === id)
+
+    // Lấy ra id của sản phẩm trong giỏ hàng
+    const getIdProductToCart = useMemo(() => {
+        return productToCart?.map((cart) => cart.id)
+    }, [productToCart])
+
+    const checkIdProductToCart = (id: string) => getIdProductToCart?.includes(id)
 
     // xử lí thanh trượt sang phải
     const handleSlideNext = () => {
@@ -63,6 +96,61 @@ export default function BestSelling() {
             slide.current -= offsetWidth.current
             slideRef.current.scrollLeft = slide.current // Áp dụng vị trí cuộn mới
         }
+    }
+
+    const addToCart = (product: Omit<CartType, 'totalPrice' | 'count'>) => {
+        console.log(product)
+        if (isAuthenticated) {
+            if (productToCart) {
+                if (!checkIdProductToCart(product.id)) {
+                    addToCartMutation.mutate(
+                        {
+                            id: product.id,
+                            title: product.title,
+                            imageUrl: product.imageUrl,
+                            count: 1,
+                            price: product.price,
+                            totalPrice: product.price * 1,
+                            stock: product.stock
+                        },
+                        {
+                            onSuccess: () => {
+                                toast.success(toastNotify.productDetail.addtoCartSuccess, { autoClose: 2000 })
+                                queryClient.invalidateQueries({ queryKey: ['cart'] })
+                            }
+                        }
+                    )
+                    return
+                }
+                updateCartMutation.mutate(
+                    {
+                        id: checkIdToCart(product.id)?.id as string,
+                        body: {
+                            id: checkIdToCart(product.id)?.id as string,
+                            imageUrl: checkIdToCart(product.id)?.imageUrl as string,
+                            title: checkIdToCart(product.id)?.title as string,
+                            price: checkIdToCart(product.id)?.price as number,
+                            stock: checkIdToCart(product.id)?.stock as number,
+                            count:
+                                (checkIdToCart(product.id)?.count as number) + 1 > product.stock
+                                    ? product.stock
+                                    : (checkIdToCart(product.id)?.count as number) + 1,
+                            totalPrice:
+                                ((checkIdToCart(product.id)?.count as number) + 1) *
+                                (checkIdToCart(product.id)?.price as number)
+                        } as CartType
+                    },
+                    {
+                        onSuccess: () => {
+                            toast.success(toastNotify.productDetail.addtoCartSuccess, { autoClose: 2000 })
+                            refetch()
+                        }
+                    }
+                )
+            }
+            return
+        }
+        navigate(path.login)
     }
 
     return (
@@ -113,7 +201,10 @@ export default function BestSelling() {
                                             {formatCurrency(product.price_discount)}
                                         </p>
                                     </div>
-                                    <div className='text-[14px] ml-auto text-[#f16325] border-[1px] border-[#f16325] flex items-center justify-center w-[26px] h-[20px] cursor-pointer'>
+                                    <div
+                                        className='text-[14px] ml-auto text-[#f16325] border-[1px] border-[#f16325] flex items-center justify-center w-[26px] h-[20px] cursor-pointer'
+                                        onClick={() => addToCart(product)}
+                                    >
                                         <FontAwesomeIcon icon={faBagShopping} />
                                     </div>
                                 </div>
