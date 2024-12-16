@@ -99,7 +99,6 @@ export default function BestSelling() {
     }
 
     const addToCart = (product: Omit<CartType, 'totalPrice' | 'count'>) => {
-        console.log(product)
         if (isAuthenticated) {
             if (productToCart) {
                 if (!checkIdProductToCart(product.id)) {

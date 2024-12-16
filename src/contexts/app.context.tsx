@@ -8,6 +8,7 @@ import { PurcharseType } from '~/types/purcharse.type'
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(initialAppContext.isAuthenticated)
     const [isCheckout, setIsCheckout] = useState<boolean>(initialAppContext.isCheckout)
+    const [isPageCart, setIsPageCart] = useState<boolean>(initialAppContext.isPageCart)
     const [isAddress, setIsAddress] = useState<boolean>(initialAppContext.isAddress)
     const [isThankyou, setIsThankyou] = useState<boolean>(initialAppContext.isThankyou)
     const [profile, setProfile] = useState<User | null>(initialAppContext.profile)
@@ -24,6 +25,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         setIsAuthenticated,
         isCheckout,
         setIsCheckout,
+        isPageCart,
+        setIsPageCart,
         isAddress,
         setIsAddress,
         isThankyou,

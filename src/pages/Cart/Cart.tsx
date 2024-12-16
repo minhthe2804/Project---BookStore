@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo } from 'react'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useMatch, useNavigate } from 'react-router-dom'
 import classNames from 'classnames/bind'
 import keyBy from 'lodash/keyBy'
 import { produce } from 'immer'
@@ -26,9 +26,10 @@ import { setCheckoutFromLS } from '~/utils/auth'
 
 const cx = classNames.bind(styles)
 export default function Cart() {
-    const { extendedCart, setExtendedCart, setIsCheckout } = useContext(AppContext)
+    const { extendedCart, setExtendedCart, setIsCheckout, setIsPageCart } = useContext(AppContext)
     const queryClient = useQueryClient()
     const navigate = useNavigate()
+    const pageCart = useMatch(path.cart)
 
     const { data: productInCartData, refetch } = useQuery({
         queryKey: ['cart'],
@@ -84,6 +85,12 @@ export default function Cart() {
             history.replaceState(null, '')
         }
     }, [])
+
+    useEffect(() => {
+        if (pageCart) {
+            setIsPageCart(true)
+        }
+    }, [pageCart, setIsPageCart])
 
     const isAllChecked = useMemo(
         () => (extendedCart.length > 0 ? extendedCart.every((cart) => cart.checked) : false),
@@ -191,7 +198,7 @@ export default function Cart() {
                         {
                             id: getIdProduct?.id as string,
                             body: {
-                                ...checked,
+                                ...(getIdProduct as CartType),
                                 count:
                                     checked.count + (getIdProduct?.count as number) > (getIdProduct?.stock as number)
                                         ? (getIdProduct?.stock as number)
@@ -210,7 +217,15 @@ export default function Cart() {
                     return
                 }
                 addCheckoutMutation.mutate(
-                    { ...checked },
+                    {
+                        id: checked.id,
+                        title: checked.title,
+                        imageUrl: checked.imageUrl,
+                        price: checked.price,
+                        totalPrice: checked.totalPrice,
+                        count: checked.count,
+                        stock: checked.stock
+                    },
                     {
                         onSuccess: () => {
                             queryClient.invalidateQueries({ queryKey: ['checkout'] })

@@ -9,6 +9,8 @@ interface AppContextInterface {
     setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
     isCheckout: boolean
     setIsCheckout: React.Dispatch<React.SetStateAction<boolean>>
+    isPageCart: boolean
+    setIsPageCart: React.Dispatch<React.SetStateAction<boolean>>
     isAddress: boolean
     setIsAddress: React.Dispatch<React.SetStateAction<boolean>>
     isThankyou: boolean
@@ -27,6 +29,8 @@ export const initialAppContext: AppContextInterface = {
     setIsAuthenticated: () => null,
     isCheckout: Boolean(getCheckoutFromLS()),
     setIsCheckout: () => null,
+    isPageCart: false,
+    setIsPageCart: () => null,
     isAddress: false,
     setIsAddress: () => null,
     isThankyou: false,

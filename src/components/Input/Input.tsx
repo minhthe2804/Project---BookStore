@@ -66,9 +66,15 @@ export default function Input({
 
     return (
         <div className={className}>
-            <label htmlFor='' className={isFont ? 'text-[14px] text-[#555555] font-semibold':'text-[14px] text-[#9397a5]'}>
-                {`${label}:`}
-            </label>
+            {label && (
+                <label
+                    htmlFor=''
+                    className={isFont ? 'text-[14px] text-[#555555] font-semibold' : 'text-[14px] text-[#9397a5]'}
+                >
+                    {`${label}:`}
+                </label>
+            )}
+
             <input
                 className={classNameInput}
                 {...registerResult}
