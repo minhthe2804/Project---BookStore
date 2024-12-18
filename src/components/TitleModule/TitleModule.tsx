@@ -16,6 +16,7 @@ export default function TitleModule({ icon, width, heading, promotion }: Props) 
                     <div className='flex justify-center items-center bg-[#ff8641] w-[42px] h-[44px] '>
                         <FontAwesomeIcon icon={icon} className='text-white text-[20px]' />
                     </div>
+
                     <div
                         className={`flex uppercase justify-center items-center bg-[#ff640b] ${width} h-[44px] text-white text-[18px]`}
                     >

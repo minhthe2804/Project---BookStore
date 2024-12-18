@@ -60,7 +60,7 @@ export default function Header() {
                     </div>
                     <div className='col-span-3 flex justify-end'>
                         <div className='flex items-end gap-3'>
-                            <div className='text-center text-white w-10 py-2 border-[1px] border-[#fff] text-[16px]' onClick={navigatePageAccount}>
+                            <div className='text-center text-white w-10 py-2 border-[1px] border-[#fff] text-[16px] cursor-pointer' onClick={navigatePageAccount}>
                                 <FontAwesomeIcon icon={faUser} />
                             </div>
                             <Popover
@@ -250,7 +250,7 @@ export default function Header() {
 
                         {isAuthenticated && (
                             <div className='flex items-center gap-2 text-white'>
-                                <Link to={path.home} className='flex items-center gap-1 text-white text-[14px]'>
+                                <Link to={path.account} className='flex items-center gap-1 text-white text-[14px]'>
                                     <FontAwesomeIcon icon={faUser} className='text-[14px]' />
                                     <p className='text-[14px]'>Tài khoản</p>
                                 </Link>

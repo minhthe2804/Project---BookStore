@@ -33,7 +33,7 @@ export default function BookChildren() {
                 {productDataBookChildren &&
                     productDataBookChildren.map((product) => (
                         <div className='col-span-2' key={product.id}>
-                            <Product product={product} isFlexColumn />
+                            <Product product={product} isFlexColumn isIconShopping/>
                         </div>
                     ))}
             </div>

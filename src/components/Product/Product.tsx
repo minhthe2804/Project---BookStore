@@ -15,6 +15,7 @@ import { formatCurrency, generateNameId } from '~/utils/utils'
 
 interface Props {
     product: ProductType
+    isIconShopping?: boolean
     isFlexColumn?: boolean
     setWidthImg?: string
     setHeightImg?: string
@@ -24,6 +25,7 @@ interface Props {
 export default function Product({
     product,
     productCategory,
+    isIconShopping,
     isFlexColumn,
     setWidthImg = 'w-full',
     setHeightImg = 'h-[242px]'
@@ -108,15 +110,15 @@ export default function Product({
         }
         navigate(path.login)
     }
-    
+
     return (
         <>
             {!productCategory && (
                 <div
                     className={
                         isFlexColumn
-                            ? 'pl-3 pr-4 border-[1px] border-[#ececec] w-full h-full pb-1 pt-1'
-                            : 'pl-3 pr-4 border-[1px] border-[#ececec] w-full h-full pt-1'
+                            ? 'px-3 border-[1px] border-[#ececec] w-full h-full pb-1 pt-1 '
+                            : 'px-3 border-[1px] border-[#ececec] w-full h-full pt-1'
                     }
                 >
                     <Link to={`${path.home}${generateNameId({ name: product.title, id: product.id })}`}>
@@ -162,15 +164,17 @@ export default function Product({
                                     </div>
                                 </div>
                             </div>
-                            <div className='flex items-center'>
-                                <p className='text-[13px] text-[#333333] mt-[1px]'>{`Đã bán ${product.sold}`}</p>
-                                <div
-                                    className='text-[14px] ml-auto text-[#f16325] border-[1px] border-[#f16325] flex items-center justify-center w-[26px] h-[20px] cursor-pointer'
-                                    onClick={addToCart}
-                                >
-                                    <FontAwesomeIcon icon={faBagShopping} />
+                            {isIconShopping && (
+                                <div className='flex items-center'>
+                                    <p className='text-[13px] text-[#333333] mt-[1px]'>{`Đã bán ${product.sold}`}</p>
+                                    <div
+                                        className='text-[14px] ml-auto text-[#f16325] border-[1px] border-[#f16325] flex items-center justify-center w-[26px] h-[20px] cursor-pointer'
+                                        onClick={addToCart}
+                                    >
+                                        <FontAwesomeIcon icon={faBagShopping} />
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     )}
                     {!isFlexColumn && (

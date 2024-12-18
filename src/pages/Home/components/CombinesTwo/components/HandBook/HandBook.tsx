@@ -32,7 +32,7 @@ export default function HandBook() {
                 {productDataHandBook &&
                     productDataHandBook.map((product) => (
                         <div className='col-span-2' key={product.id}>
-                            <Product product={product} isFlexColumn />
+                            <Product product={product} isFlexColumn isIconShopping/>
                         </div>
                     ))}
             </div>
