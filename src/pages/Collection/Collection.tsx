@@ -18,7 +18,8 @@ export default function Collection() {
     const [productData, setProductData] = useState<ProductType[]>([])
     const [pages, setPages] = useState<number[]>()
     const [active, setActive] = useState<number>(0)
-    const [categoryProduct, setCategoryProduct] = useState<string>('')
+    const [isActiveCategory, setIsActiveCategory] = useState<string | null>('')
+    const [categoryProduct, setCategoryProduct] = useState<string | null>('')
     const [checkCategory, setCheckCategory] = useState<number | null>()
     const [checkPriceRange, setCheckPriceRange] = useState<number | null>()
     const [priceRange, setPriceRange] = useState<string>('')
@@ -75,6 +76,8 @@ export default function Collection() {
     }
 
     const handleCheckCategory = (category: string) => {
+        setCheckCategory(null)
+        setIsActiveCategory(category)
         setCategoryProduct(category)
         setPages(pages)
         if (productListData) {
@@ -99,6 +102,7 @@ export default function Collection() {
     }
 
     const handleInputCheckCategory = (index: number, category: string) => {
+        setIsActiveCategory(null)
         setCategoryProduct(category)
         setCheckCategory(index)
         setPages(pages)
@@ -131,6 +135,7 @@ export default function Collection() {
             setPriceRange('')
             setArrangePrice(arrange[0])
             setSelectDefaultValue('')
+            setIsActiveCategory(null)
             setCheckCategory(null)
             setCheckPriceRange(null)
             setMinPrice(null)
@@ -280,8 +285,8 @@ export default function Collection() {
                             className={classNames(
                                 'text-[14px] text-[#555555] cursor-pointer hover:text-[#f16325] transtion duration-200 ease-in',
                                 {
-                                    'text-[#f16325]': category === categoryProduct,
-                                    'text-[#555555]': category !== categoryProduct
+                                    'text-[#f16325]': category === isActiveCategory,
+                                    'text-[#555555]': category !== isActiveCategory
                                 }
                             )}
                             key={index}
