@@ -9,4 +9,6 @@ export interface User {
     password: string
     address?: string
     phone?: string
+    createdAt?: string
+    updatedAt?: string
 }

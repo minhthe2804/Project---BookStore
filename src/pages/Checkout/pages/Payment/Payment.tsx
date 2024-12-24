@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import classNames from 'classnames'
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -12,7 +12,13 @@ import { path } from '~/constants/path'
 import { toastNotify } from '~/constants/toastNotify'
 import { AppContext } from '~/contexts/createContext'
 import { PurcharseType } from '~/types/purcharse.type'
-import { generateCartId, generateOrderId, getDateString, getTimeString } from '~/utils/utils'
+import {
+    formatCurrency,
+    generateCartId,
+    generateOrderId,
+    getDateString,
+    getTimeString
+} from '~/utils/utils'
 
 export default function Payment() {
     const { profile, setIsThankyou, setProductInThankyou } = useContext(AppContext)
@@ -24,6 +30,15 @@ export default function Payment() {
     })
 
     const checkoutProduct = checkoutProductData?.data
+
+    const totalPayment = useMemo(
+        () =>
+            checkoutProduct?.reduce((total, checkout) => {
+                return total + checkout.totalPrice
+            }, 0),
+        [checkoutProduct]
+    )
+
     const buyProductMutation = useMutation({
         mutationFn: (body: PurcharseType) => purcharseApi.buyProducts(body)
     })
@@ -34,21 +49,19 @@ export default function Payment() {
                 const date = getDateString()
                 const time = getTimeString()
 
-                const res = await Promise.all(
-                    checkoutProduct.map((checkout) =>
-                        buyProductMutation.mutateAsync({
-                            ...checkout,
-                            id: generateCartId(),
-                            username: profile.username,
-                            address: profile.address as string,
-                            phone: profile.phone as string,
-                            date,
-                            time,
-                            order: generateOrderId()
-                        })
-                    )
-                )
-                setProductInThankyou((prev) => [...prev, ...res.map((response) => response.data)])
+                const res = await buyProductMutation.mutateAsync({
+                    id: generateCartId(),
+                    username: profile.username,
+                    address: profile.address as string,
+                    phone: profile.phone as string,
+                    date,
+                    time,
+                    order: generateOrderId(),
+                    product: [...checkoutProduct],
+                    totalProduct: (totalPayment as number) + 35000
+                })
+
+                setProductInThankyou((prev) => [...prev, res.data])
                 setIsThankyou(true)
                 toast.success(toastNotify.purcharse.buyProduct, { autoClose: 2000 })
                 navigate(path.checkoutThankYou)
@@ -71,9 +84,9 @@ export default function Payment() {
                     <div className='w-[18px] h-[18px] rounded-full bg-[#338bdc] flex justify-center items-center'>
                         <div className='w-[4px] h-[4px] rounded-full bg-white'></div>
                     </div>
-                    <p className='text-[14px] text-[#737373]'>Nhận hàng trực tiếp tại cửa hàng</p>
+                    <p className='text-[14px] text-[#737373]'>Giao hàng tận nơi</p>
                 </div>
-                <p className='text-[14px] text-[#737373]'>0₫</p>
+                <p className='text-[14px] text-[#737373]'>{formatCurrency(35000)}</p>
             </div>
             <p className='text-[18px] mt-[20px] text-[#333333]'>Phương thức thanh toán</p>
             <div className='w-full border-[1px] border-[#e6e6e6] rounded-[4px_4px_0_0] py-[18px] px-[20px] flex items-center justify-between mt-[16px]'>
@@ -88,13 +101,12 @@ export default function Payment() {
                             className='w-full h-full object-cover'
                         />
                     </div>
-                    <p className='text-[14px] text-[#737373]'>Thanh toán trực tiếp tại cửa hàng</p>
+                    <p className='text-[14px] text-[#737373]'>Thanh toán khi giao hàng (COD)</p>
                 </div>
             </div>
             <div className='w-full border-l-[1px] border-r-[1px] border-b-[1px] border-[#e6e6e6] rounded-[0_0_4px_4px] py-[26px] px-[20px] flex items-center justify-center text-center bg-[#fafafa]'>
-                <p className='text-[14px] text-[#737373]'>
-                    Quý khách hàng vui lòng chờ cuộc gọi xác nhận đơn hàng và hỗ trợ thanh toán từ nhân viên cửa hàng.
-                    Xin chân thành cảm ơn
+                <p className='text-[14px] text-[#737373] w-[330px]'>
+                    Quý khách vui lòng thanh toán chi phí khi nhận hàng Thời gian giao hàng mất 3 - 5 ngày
                 </p>
             </div>
             <div className='flex items-center justify-between mt-[7px]'>

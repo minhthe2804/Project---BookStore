@@ -6,6 +6,15 @@ export function formatCurrency(currency: number) {
     }).format(currency)
 }
 
+export function formatCurrencySum(amount1: number, amount2: number) {
+    const total = amount1 + amount2
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+        minimumFractionDigits: 0
+    }).format(total)
+}
+
 export function formatNumberToSocialStyle(value: number) {
     return new Intl.NumberFormat('en', {
         notation: 'compact',
@@ -24,6 +33,10 @@ const removeSpecialCharacter = (str: string) => {
 
 export const generateNameId = ({ name, id }: { name: string; id: string }) => {
     return removeSpecialCharacter(name).replace(/\s/g, '-') + `-i-${id}`
+}
+
+export const generateId = (id: string) => {
+    return id
 }
 
 export const getIdFromNameId = (nameId: string) => {
@@ -61,7 +74,8 @@ export function getLastPart(str: string) {
 }
 
 export const generateCartId = () => {
-    return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+    const randomNumber = Math.floor(1000000000 + Math.random() * 9000000000)
+    return `${randomNumber}`
 }
 
 export function generateCreatedAt() {

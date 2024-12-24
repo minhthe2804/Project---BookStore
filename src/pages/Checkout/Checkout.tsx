@@ -2,7 +2,7 @@ import { Link, Outlet, useMatch } from 'react-router-dom'
 import classNames from 'classnames'
 
 import { useEffect, useMemo } from 'react'
-import { formatCurrency } from '~/utils/utils'
+import { formatCurrency, formatCurrencySum } from '~/utils/utils'
 import { useQuery } from '@tanstack/react-query'
 import { checkoutApi } from '~/apis/checkout.api'
 import { path } from '~/constants/path'
@@ -135,15 +135,70 @@ export default function Checkout() {
                                     </div>
                                 ))}
                             <div className='w-full h-[1px] bg-[#e6e6e6]'></div>
-                            <div className='flex items-center justify-between'>
-                                <p className='text-[#4b4b4b] text-[16px]'>Tổng tiền</p>
-                                <div className='flex items-center gap-[10px]'>
-                                    <p className='text-[12px] text-[#969696]'>VND</p>
-                                    <p className='text-[22px] opacity-[0.8]'>
-                                        {formatCurrency(totalPayment as number)}
-                                    </p>
-                                </div>
+
+                            <div className='flex items-center justify-between text-[14px] text-[#717171]'>
+                                <p className=' '>Tạm tính</p>
+                                <p className=''>{formatCurrency(totalPayment as number)}</p>
                             </div>
+
+                            {isAddress && (
+                                <div className='flex items-center justify-between text-[14px] text-[#717171] -mt-2'>
+                                    <p className=' '>Phí vận chuyển</p>
+                                    <p className=''>—</p>
+                                </div>
+                            )}
+
+                            {isPayment && (
+                                <div className='flex items-center justify-between text-[14px] text-[#717171] -mt-2'>
+                                    <p className=' '>Phí vận chuyển</p>
+                                    <p className=''>{formatCurrency(35000)}</p>
+                                </div>
+                            )}
+
+                            {isThankyou && (
+                                <div className='flex items-center justify-between text-[14px] text-[#717171] -mt-2'>
+                                    <p className=' '>Phí vận chuyển</p>
+                                    <p className=''>{formatCurrency(35000)}</p>
+                                </div>
+                            )}
+
+                            <div className='w-full h-[1px] bg-[#e6e6e6]'></div>
+
+                            {isAddress && (
+                                <div className='flex items-center justify-between'>
+                                    <p className='text-[#4b4b4b] text-[16px]'>Tổng tiền</p>
+                                    <div className='flex items-center gap-[10px]'>
+                                        <p className='text-[12px] text-[#969696]'>VND</p>
+                                        <p className='text-[22px] opacity-[0.8]'>
+                                            {formatCurrency(totalPayment as number)}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {isPayment && (
+                                <div className='flex items-center justify-between'>
+                                    <p className='text-[#4b4b4b] text-[16px]'>Tổng tiền</p>
+                                    <div className='flex items-center gap-[10px]'>
+                                        <p className='text-[12px] text-[#969696]'>VND</p>
+                                        <p className='text-[22px] opacity-[0.8]'>
+                                            {formatCurrencySum(totalPayment as number, 35000)}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {isThankyou && (
+                                <div className='flex items-center justify-between'>
+                                    <p className='text-[#4b4b4b] text-[16px]'>Tổng tiền</p>
+                                    <div className='flex items-center gap-[10px]'>
+                                        <p className='text-[12px] text-[#969696]'>VND</p>
+                                        <p className='text-[22px] opacity-[0.8]'>
+                                            {formatCurrencySum(totalPayment as number, 35000)}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

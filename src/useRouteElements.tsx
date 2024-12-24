@@ -19,6 +19,9 @@ import Address from './pages/Checkout/pages/Address'
 import Payment from './pages/Checkout/pages/Payment'
 import ThankYou from './pages/Checkout/pages/ThankYou'
 import Collection from './pages/Collection'
+import AccountOder from './pages/Account/pages/AccountOder'
+import ChangePassword from './pages/Account/pages/ChangePassword'
+import UpdateProfile from './pages/Account/pages/UpdateProfile'
 
 function ProtectedRoute() {
     const { isAuthenticated } = useContext(AppContext)
@@ -127,7 +130,21 @@ export default function useRouteElements() {
                         <MainLayout>
                             <Account />
                         </MainLayout>
-                    )
+                    ),
+                    children: [
+                        {
+                            path: path.accountOder,
+                            element: <AccountOder />
+                        },
+                        {
+                            path: path.changePassword,
+                            element: <ChangePassword />
+                        },
+                        {
+                            path: path.updateProfile,
+                            element: <UpdateProfile />
+                        }
+                    ]
                 },
                 {
                     path: '',

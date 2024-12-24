@@ -20,8 +20,11 @@ import { cartApi } from '~/apis/cart.api'
 import { toastNotify } from '~/constants/toastNotify'
 import { toast } from 'react-toastify'
 import { purcharseApi } from '~/apis/purcharse.api'
+import { User } from '~/types/user.type'
+import { generateUpdatedAt } from '~/utils/utils'
 
-type FormData = UserSchema
+type FormData = Omit<UserSchema, 'name' | 'lastname'>
+const newUserSchema = userSchema.omit(['name', 'lastname'])
 export default function Address() {
     const {
         setIsAddress,
@@ -44,22 +47,12 @@ export default function Address() {
             phone: '',
             address: ''
         },
-        resolver: yupResolver(userSchema)
+        resolver: yupResolver(newUserSchema)
     })
 
     const navigate = useNavigate()
     const updateProfileMutation = useMutation({
-        mutationFn: (bodyData: {
-            id: string
-            body: {
-                name: { firstname: string; lastname: string }
-                username: string
-                email: string
-                password: string
-                address: string
-                phone: string
-            }
-        }) => authApi.forgotPassword(bodyData.id, bodyData.body)
+        mutationFn: (bodyData: { id: string; body: User }) => authApi.forgotPassword(bodyData.id, bodyData.body)
     })
 
     const onSubmit = handleSubmit((data) => {
@@ -70,20 +63,23 @@ export default function Address() {
                 body: {
                     ...profile,
                     phone: data.phone as string,
-                    address: data.address
+                    address: data.address,
+                    updatedAt: generateUpdatedAt()
                 }
             })
             setProfile({
                 ...profile,
                 username: username,
                 address: address,
-                phone: phone
+                phone: phone,
+                updatedAt: generateUpdatedAt()
             })
             setProfileFromLS({
                 ...profile,
                 username: username,
                 address: address,
-                phone: phone
+                phone: phone,
+                updatedAt: generateUpdatedAt()
             })
             setIsAddress(true)
             navigate(path.checkoutPayment)

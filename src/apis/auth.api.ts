@@ -10,15 +10,5 @@ export const authApi = {
     registerAcount: () => httpAuth.get<Auth[]>(URL),
     login: () => httpAuth.get<Auth[]>(URL),
     forgotPassword: (id: string, body: Omit<Auth, 'id'>) => httpAuth.put<Auth>(`${URL}/${id}`, body),
-    updateProfile: (
-        id: string,
-        body: {
-            name: { firstname: string; lastname: string }
-            username: string
-            email: string
-            password: string
-            address: string
-            phone: string
-        }
-    ) => httpAuth.put<User>(`${URL}/${id}`, body)
+    updateProfile: (id: string, body: User) => httpAuth.put<User>(`${URL}/${id}`, body)
 }
