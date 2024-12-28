@@ -125,7 +125,7 @@ export default function Checkout() {
                                                     {checkout.count}
                                                 </div>
                                             </div>
-                                            <div className='flex flex-col text-[14px]  w-[240px]'>
+                                            <div className='flex flex-col text-[14px] w-[240px]'>
                                                 <p className=' text-[#4b4b4b] truncate'>{checkout.title}</p>
                                             </div>
                                         </div>

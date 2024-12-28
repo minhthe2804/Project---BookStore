@@ -16,6 +16,7 @@ import { CartType } from '~/types/cart.type'
 import { cartApi } from '~/apis/cart.api'
 import { toast } from 'react-toastify'
 import { toastNotify } from '~/constants/toastNotify'
+import { Product } from '~/types/product.type'
 
 const cx = classNames.bind(styles)
 export default function BestSelling() {
@@ -98,7 +99,7 @@ export default function BestSelling() {
         }
     }
 
-    const addToCart = (product: Omit<CartType, 'totalPrice' | 'count'>) => {
+    const addToCart = (product: Product) => {
         if (isAuthenticated) {
             if (productToCart) {
                 if (!checkIdProductToCart(product.id)) {
@@ -108,8 +109,8 @@ export default function BestSelling() {
                             title: product.title,
                             imageUrl: product.imageUrl,
                             count: 1,
-                            price: product.price,
-                            totalPrice: product.price * 1,
+                            price: product.price_discount,
+                            totalPrice: product.price_discount * 1,
                             stock: product.stock
                         },
                         {

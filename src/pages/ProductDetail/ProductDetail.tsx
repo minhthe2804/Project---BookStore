@@ -170,8 +170,8 @@ export default function ProductDetail() {
                             title: productData.title,
                             imageUrl: productData.imageUrl,
                             count: buyCount,
-                            price: productData.price,
-                            totalPrice: productData.price * buyCount,
+                            price: productData.price_discount,
+                            totalPrice: productData.price_discount * buyCount,
                             stock: productData.stock
                         },
                         {
@@ -220,8 +220,8 @@ export default function ProductDetail() {
                         title: productData.title,
                         imageUrl: productData.imageUrl,
                         count: buyCount,
-                        price: productData.price,
-                        totalPrice: productData.price * buyCount,
+                        price: productData.price_discount,
+                        totalPrice: productData.price_discount * buyCount,
                         stock: productData.stock
                     })
                     setCheckoutFromLS('ok')

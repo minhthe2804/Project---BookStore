@@ -73,8 +73,8 @@ export default function Product({
                             title: product.title,
                             imageUrl: product.imageUrl,
                             count: 1,
-                            price: product.price,
-                            totalPrice: product.price * 1,
+                            price: product.price_discount,
+                            totalPrice: product.price_discount * 1,
                             stock: product.stock
                         },
                         {
