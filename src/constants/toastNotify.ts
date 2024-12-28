@@ -12,6 +12,8 @@ export const toastNotify = {
         logOutSuccess: 'Bạn đã đăng xuất thành công'
     },
     forgotPassword: {
+        isEmtyEmail: "Email là bắt buộc",
+        isValidEmail: "Email không đúng định dạng",
         changePasswordSuccess: 'Bạn đã đổi mật khẩu thành công',
         emailError: 'Email không tồn tại',
         passwordError: 'Bạn cần phải nhập mẩu khẩu khác so với mật khẩu trước'

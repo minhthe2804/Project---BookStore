@@ -89,6 +89,8 @@ export default function ForgotPassword() {
     const handleOpenPassword = () => {
         const inputEmail = getValues('email')
         const findUser = dataUser?.data.find((user) => user.email === inputEmail)
+        // eslint-disable-next-line no-useless-escape
+        const validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
         if (findUser) {
             setIsEmail(true)
             if (count >= 2) {
@@ -97,6 +99,14 @@ export default function ForgotPassword() {
             }
             setCount((prev) => prev + 1)
             setErrorEmail('')
+            return
+        }
+        if (inputEmail.trim() === '') {
+            setErrorEmail(toastNotify.forgotPassword.isEmtyEmail)
+            return
+        }
+        if (!validEmail.test(inputEmail)) {
+            setErrorEmail(toastNotify.forgotPassword.isValidEmail)
             return
         }
         setErrorEmail(toastNotify.forgotPassword.emailError)

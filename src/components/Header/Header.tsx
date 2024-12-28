@@ -17,7 +17,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { cartApi } from '~/apis/cart.api'
 import { checkoutApi } from '~/apis/checkout.api'
 import { purcharseApi } from '~/apis/purcharse.api'
-import { formatCurrency, generateId, generateNameId } from '~/utils/utils'
+import { formatCurrency, generateNameId } from '~/utils/utils'
 import { CartType } from '~/types/cart.type'
 
 const cx = classname.bind(styles)
