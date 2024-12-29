@@ -8,6 +8,7 @@ import MiniBanner from './components/MiniBanner'
 import Policy from '~/components/Policy'
 import { useContext, useEffect } from 'react'
 import { AppContext } from '~/contexts/createContext'
+import ReviewBlog from './components/ReviewBlog'
 
 export default function Home() {
     const { setIsPageCart } = useContext(AppContext)
@@ -24,7 +25,7 @@ export default function Home() {
             <MiniBanner />
             <BookLiterary />
             <CombinesTwo />
-
+            <ReviewBlog />
             <Help />
             <Policy />
         </div>

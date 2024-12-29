@@ -18,5 +18,13 @@ export const titleModule = {
     hankBook: {
         heading: 'Cẩm nang làm bố mẹ',
         promotion: ''
+    },
+    evaluate: {
+        heading: 'Đánh giá sách',
+        promotion: ''
+    },
+    news: {
+        heading: 'Tin tức mới',
+        promotion: ''
     }
 }
