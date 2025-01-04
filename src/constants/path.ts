@@ -17,5 +17,6 @@ export const path = {
     account: '/account',
     accountOder: '/account/oder/:nameId',
     changePassword: '/account/changepassword',
-    updateProfile: '/account/updateprofile'
+    updateProfile: '/account/updateprofile',
+    productSearch: "/productSearch"
 }

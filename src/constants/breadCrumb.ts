@@ -11,7 +11,12 @@ export const breadCrumb = {
     collection: {
         title: 'Tất cả sản phẩm'
     },
+<<<<<<< HEAD
     contact: {
         title: 'Liên hệ'
+=======
+    productSearch: {
+        title: 'Tìm kiếm'
+>>>>>>> 071c16f1dcd2b207e3c882a138cd6cba864506c3
     }
 }

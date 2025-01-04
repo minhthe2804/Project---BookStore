@@ -22,6 +22,7 @@ import Collection from './pages/Collection'
 import AccountOder from './pages/Account/pages/AccountOder'
 import ChangePassword from './pages/Account/pages/ChangePassword'
 import UpdateProfile from './pages/Account/pages/UpdateProfile'
+import ProductSearch from './pages/ProductSearch'
 
 function ProtectedRoute() {
     const { isAuthenticated } = useContext(AppContext)
@@ -203,6 +204,14 @@ export default function useRouteElements() {
             element: (
                 <MainLayout>
                     <Contact />
+                </MainLayout>
+            )
+        },
+        {
+            path: path.productSearch,
+            element: (
+                <MainLayout>
+                    <ProductSearch />
                 </MainLayout>
             )
         }

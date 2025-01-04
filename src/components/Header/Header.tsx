@@ -19,6 +19,7 @@ import { checkoutApi } from '~/apis/checkout.api'
 import { purcharseApi } from '~/apis/purcharse.api'
 import { formatCurrency, generateNameId } from '~/utils/utils'
 import { CartType } from '~/types/cart.type'
+import Search from '../Search'
 
 const cx = classname.bind(styles)
 export default function Header() {
@@ -159,7 +160,7 @@ export default function Header() {
         }
         navigate(path.checkoutAddress)
     }
-    
+
     const handleLogout = () => {
         clearLS()
         setIsAuthenticated(false)
@@ -188,16 +189,7 @@ export default function Header() {
                         </Link>
                     </div>
                     <div className='col-span-6'>
-                        <div className='flex items-center pr-[5px] pl-3 bg-white w-full border-[1px] border-[#e5e6ec]'>
-                            <input
-                                type='text'
-                                className='w-full outline-none py-2 placeholder:text-[13px] text-black '
-                                placeholder='Tìm kiếm...'
-                            />
-                            <div className='w-[75px] bg-[#f16325] py-[5px] text-center text-white'>
-                                <FontAwesomeIcon icon={faMagnifyingGlass} />
-                            </div>
-                        </div>
+                        <Search />
                     </div>
                     <div className='col-span-3 flex justify-end'>
                         <div className='flex items-end gap-3'>
@@ -274,7 +266,10 @@ export default function Header() {
                                                             {formatCurrency(totalPriceConvenientCart as number)}
                                                         </p>
                                                     </div>
-                                                    <Button className='w-full bg-[#f16235] text-[14px] text-white flex items-center justify-center py-2 hover:opacity-[0.9] transtion duration-200 ease-in mt-4' onClick={handleCheckOut}>
+                                                    <Button
+                                                        className='w-full bg-[#f16235] text-[14px] text-white flex items-center justify-center py-2 hover:opacity-[0.9] transtion duration-200 ease-in mt-4'
+                                                        onClick={handleCheckOut}
+                                                    >
                                                         Thanh toán
                                                     </Button>
                                                 </div>
