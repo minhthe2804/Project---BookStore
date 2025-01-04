@@ -10,5 +10,8 @@ export const breadCrumb = {
     },
     collection: {
         title: 'Tất cả sản phẩm'
+    },
+    contact: {
+        title: 'Liên hệ'
     }
 }
