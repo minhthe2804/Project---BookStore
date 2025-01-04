@@ -22,6 +22,8 @@ interface AppContextInterface {
     productInThankyou: PurcharseType[]
     setProductInThankyou: React.Dispatch<React.SetStateAction<PurcharseType[]>>
     reset: () => void
+    searchProduct: string
+    setSearchProduct: React.Dispatch<React.SetStateAction<string>>
 }
 
 export const initialAppContext: AppContextInterface = {
@@ -41,7 +43,9 @@ export const initialAppContext: AppContextInterface = {
     setExtendedCart: () => null,
     productInThankyou: [],
     setProductInThankyou: () => null,
-    reset: () => null
+    reset: () => null,
+    searchProduct: '',
+    setSearchProduct: () => null
 }
 
 export const AppContext = createContext<AppContextInterface>(initialAppContext)

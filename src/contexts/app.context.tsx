@@ -14,6 +14,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const [profile, setProfile] = useState<User | null>(initialAppContext.profile)
     const [extendedCart, setExtendedCart] = useState<ExtendedCart[]>(initialAppContext.extendedCart)
     const [productInThankyou, setProductInThankyou] = useState<PurcharseType[]>(initialAppContext.productInThankyou)
+    const [searchProduct, setSearchProduct] = useState<string>(initialAppContext.searchProduct)
     const reset = () => {
         setIsAuthenticated(false)
         setProfile(null)
@@ -37,7 +38,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         setExtendedCart,
         productInThankyou,
         setProductInThankyou,
-        reset
+        reset,
+        searchProduct,
+        setSearchProduct
     }
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }
