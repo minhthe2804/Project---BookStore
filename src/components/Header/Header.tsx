@@ -16,7 +16,7 @@ import { toastNotify } from '~/constants/toastNotify'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { cartApi } from '~/apis/cart.api'
 import { checkoutApi } from '~/apis/checkout.api'
-import { purcharseApi } from '~/apis/purcharse.api'
+// import { purcharseApi } from '~/apis/purcharse.api'
 import { formatCurrency, generateNameId } from '~/utils/utils'
 import { CartType } from '~/types/cart.type'
 import Search from '../Search'
@@ -68,19 +68,19 @@ export default function Header() {
             checkoutApi.updateProducttoCheckout(bodyData.id, bodyData.body)
     })
 
-    const { data: productInPurcharseData } = useQuery({
-        queryKey: ['purcharse'],
-        queryFn: () => purcharseApi.getPurcharse()
-    })
+    // const { data: productInPurcharseData } = useQuery({
+    //     queryKey: ['purcharse'],
+    //     queryFn: () => purcharseApi.getPurcharse()
+    // })
 
-    const deletePurcharseMutation = useMutation({
-        mutationFn: (id: string) => purcharseApi.deleteProductInPurcharse(id)
-    })
+    // const deletePurcharseMutation = useMutation({
+    //     mutationFn: (id: string) => purcharseApi.deleteProductInPurcharse(id)
+    // })
 
     const productToCart = productInCartData?.data
     const productCheckout = checkoutProductData?.data
     const productDataCount = productToCart?.length
-    const productPurcharse = productInPurcharseData?.data
+    // const productPurcharse = productInPurcharseData?.data
 
     const handleDelete = (id: string) => {
         deleteCartMutation.mutate(id)
@@ -171,7 +171,7 @@ export default function Header() {
         setProductInThankyou([])
         productToCart?.map((cart) => deleteCartMutation.mutate(cart.id))
         productCheckout?.map((checkout) => deleteProductToCheckoutMutation.mutate(checkout.id))
-        productPurcharse?.map((purcharse) => deletePurcharseMutation.mutate(purcharse.id))
+        // productPurcharse?.map((purcharse) => deletePurcharseMutation.mutate(purcharse.id))
         toast.success(toastNotify.logOut.logOutSuccess, { autoClose: 2000 })
     }
 
