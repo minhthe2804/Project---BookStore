@@ -145,6 +145,11 @@ export default function Address() {
         toast.success(toastNotify.logOut.logOutSuccess, { autoClose: 2000 })
     }
 
+    const handleDeleteProductToCheckout = () => {
+        setIsCheckout(false)
+        checkoutProduct?.map((checkout) => deleteProductToCheckoutMutation.mutate(checkout.id))
+    }
+
     return (
         <div>
             {/* <Helmet>
@@ -212,20 +217,36 @@ export default function Address() {
                     >
                         Giỏ hàng
                     </Link>
-                    <Button
-                        className={classNames(
-                            'w-[203px] py-[17px] bg-[#2b78a0] rounded-[4px] text-[14px] font-[600] text-white hover:bg-[#42ade7] transition duration-200 ease-in flex items-center justify-center'
-                            // {
-                            //     'w-[203px] py-[17px] bg-[#2b78a0] opacity-[0.6] rounded-[4px] text-[14px] font-[600] text-white flex items-center justify-center':
-                            //         true
-                            // }
-                        )}
-                        // onClick={handleUpdate}
-                        // isLoading={true}
-                        // disabled={true}
-                    >
-                        Phương thức thanh toán
-                    </Button>
+                    <div className='flex items-center gap-5'>
+                        <Button
+                            className={classNames(
+                                'w-[140px] py-[17px] bg-[#ff3237] rounded-[4px] text-[14px] font-[600] text-white hover:bg-[#fc5959] transition duration-200 ease-in flex items-center justify-center'
+                                // {
+                                //     'w-[203px] py-[17px] bg-[#2b78a0] opacity-[0.6] rounded-[4px] text-[14px] font-[600] text-white flex items-center justify-center':
+                                //         true
+                                // }
+                            )}
+                            onClick={handleDeleteProductToCheckout}
+                            // isLoading={true}
+                            // disabled={true}
+                        >
+                            Hủy đơn hàng
+                        </Button>
+                        <Button
+                            className={classNames(
+                                'w-[203px] py-[17px] bg-[#2b78a0] rounded-[4px] text-[14px] font-[600] text-white hover:bg-[#42ade7] transition duration-200 ease-in flex items-center justify-center'
+                                // {
+                                //     'w-[203px] py-[17px] bg-[#2b78a0] opacity-[0.6] rounded-[4px] text-[14px] font-[600] text-white flex items-center justify-center':
+                                //         true
+                                // }
+                            )}
+                            // onClick={handleUpdate}
+                            // isLoading={true}
+                            // disabled={true}
+                        >
+                            Phương thức thanh toán
+                        </Button>
+                    </div>
                 </div>
             </form>
 
