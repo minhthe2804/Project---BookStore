@@ -45,6 +45,7 @@ export default function Checkout() {
 
     const handleDeleteProductToCheckout = (id: string) => {
         if (checkoutProduct?.length === 1) {
+            localStorage.removeItem('checkout')
             setIsCheckout(false)
         }
         deleteProductToCheckoutMutation.mutate(id)

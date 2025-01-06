@@ -146,6 +146,7 @@ export default function Address() {
     }
 
     const handleDeleteProductToCheckout = () => {
+        localStorage.removeItem('checkout')
         setIsCheckout(false)
         checkoutProduct?.map((checkout) => deleteProductToCheckoutMutation.mutate(checkout.id))
     }
