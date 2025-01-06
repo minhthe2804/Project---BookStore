@@ -26,5 +26,9 @@ export const titleModule = {
     news: {
         heading: 'Tin tức mới',
         promotion: ''
+    },
+    pageNew: {
+        heading: 'Tin tức nổi bật',
+        promotion: ''
     }
 }

@@ -23,6 +23,7 @@ import AccountOder from './pages/Account/pages/AccountOder'
 import ChangePassword from './pages/Account/pages/ChangePassword'
 import UpdateProfile from './pages/Account/pages/UpdateProfile'
 import ProductSearch from './pages/ProductSearch'
+import News from './pages/News'
 
 function ProtectedRoute() {
     const { isAuthenticated } = useContext(AppContext)
@@ -204,6 +205,14 @@ export default function useRouteElements() {
             element: (
                 <MainLayout>
                     <Contact />
+                </MainLayout>
+            )
+        },
+        {
+            path: path.news,
+            element: (
+                <MainLayout>
+                    <News />
                 </MainLayout>
             )
         },
