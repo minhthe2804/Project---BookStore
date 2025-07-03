@@ -42,6 +42,7 @@ export default function Register() {
             username: string
             email: string
             password: string
+            role: string
             createdAt: string
         }) => authApi.register(body)
     })
@@ -71,6 +72,7 @@ export default function Register() {
             username: lastname + name,
             email,
             password,
+            role: "user",
             createdAt: generateCreatedAt()
         }
         regiterMutation.mutate(registerAccount, {

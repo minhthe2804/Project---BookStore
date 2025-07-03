@@ -24,6 +24,12 @@ import ChangePassword from './pages/Account/pages/ChangePassword'
 import UpdateProfile from './pages/Account/pages/UpdateProfile'
 import ProductSearch from './pages/ProductSearch'
 import News from './pages/News'
+import Admin from './pages/Admin'
+import AdminLayout from './Layouts/AdminLayout/AdminLayout'
+import AdminProducts from './pages/Admin/pages/AdminProducts'
+import AdminOrders from './pages/Admin/pages/AdminOrders.tsx'
+import AdminUsers from './pages/Admin/pages/AdminUsers'
+import AdminReports from './pages/Admin/pages/AdminReports'
 
 function ProtectedRoute() {
     const { isAuthenticated } = useContext(AppContext)
@@ -33,6 +39,16 @@ function ProtectedRoute() {
 function RejectedRoute() {
     const { isAuthenticated } = useContext(AppContext)
     return !isAuthenticated ? <Outlet /> : <Navigate to={path.home} />
+}
+
+function AdminRoute() {
+    const { profile } = useContext(AppContext)
+    return profile?.role === 'admin' ? <Outlet /> : <Navigate to={path.home} />
+}
+
+function UserRoute() {
+    const { profile } = useContext(AppContext)
+    return profile?.role === 'user' ? <Outlet /> : <Navigate to={path.home} />
 }
 
 function CheckoutRoute() {
@@ -119,68 +135,106 @@ export default function useRouteElements() {
             element: <ProtectedRoute />,
             children: [
                 {
-                    path: path.cart,
-                    element: (
-                        <MainLayout>
-                            <Cart />
-                        </MainLayout>
-                    )
-                },
-                {
-                    path: path.account,
-                    element: (
-                        <MainLayout>
-                            <Account />
-                        </MainLayout>
-                    ),
+                    path: '',
+                    element: <AdminRoute />,
                     children: [
                         {
-                            path: path.accountOder,
-                            element: <AccountOder />
-                        },
-                        {
-                            path: path.changePassword,
-                            element: <ChangePassword />
-                        },
-                        {
-                            path: path.updateProfile,
-                            element: <UpdateProfile />
+                            path: path.adminDashboard,
+                            element: (
+                                <AdminLayout>
+                                    <Admin />
+                                </AdminLayout>
+                            ),
+                            children: [
+                                {
+                                    path: path.adminProducts,
+                                    element: <AdminProducts />
+                                },
+                                {
+                                    path: path.adminOrders,
+                                    element: <AdminOrders />
+                                },
+                                {
+                                    path: path.adminUsers,
+                                    element: <AdminUsers />
+                                },
+                                {
+                                    path: path.adminReports,
+                                    element: <AdminReports />
+                                }
+                            ]
                         }
                     ]
                 },
                 {
                     path: '',
-                    element: <CheckoutRoute />,
+                    element: <UserRoute />,
                     children: [
                         {
-                            path: path.checkout,
-                            element: <Checkout />,
+                            path: path.cart,
+                            element: (
+                                <MainLayout>
+                                    <Cart />
+                                </MainLayout>
+                            )
+                        },
+                        {
+                            path: path.account,
+                            element: (
+                                <MainLayout>
+                                    <Account />
+                                </MainLayout>
+                            ),
                             children: [
                                 {
-                                    path: '',
-                                    element: <Outlet />,
+                                    path: path.accountOder,
+                                    element: <AccountOder />
+                                },
+                                {
+                                    path: path.changePassword,
+                                    element: <ChangePassword />
+                                },
+                                {
+                                    path: path.updateProfile,
+                                    element: <UpdateProfile />
+                                }
+                            ]
+                        },
+                        {
+                            path: '',
+                            element: <CheckoutRoute />,
+                            children: [
+                                {
+                                    path: path.checkout,
+                                    element: <Checkout />,
                                     children: [
                                         {
-                                            path: path.checkoutAddress,
-                                            element: <Address />
-                                        },
-                                        {
                                             path: '',
-                                            element: <AddressRoute />,
+                                            element: <Outlet />,
                                             children: [
                                                 {
-                                                    path: path.checkoutPayment,
-                                                    element: <Payment />
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            path: '',
-                                            element: <ThankyouRoute />,
-                                            children: [
+                                                    path: path.checkoutAddress,
+                                                    element: <Address />
+                                                },
                                                 {
-                                                    path: path.checkoutThankYou,
-                                                    element: <ThankYou />
+                                                    path: '',
+                                                    element: <AddressRoute />,
+                                                    children: [
+                                                        {
+                                                            path: path.checkoutPayment,
+                                                            element: <Payment />
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    path: '',
+                                                    element: <ThankyouRoute />,
+                                                    children: [
+                                                        {
+                                                            path: path.checkoutThankYou,
+                                                            element: <ThankYou />
+                                                        }
+                                                    ]
                                                 }
                                             ]
                                         }

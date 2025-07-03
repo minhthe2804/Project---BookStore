@@ -77,6 +77,8 @@ export default function Collection() {
 
     const handleCheckCategory = (category: string) => {
         setCheckCategory(null)
+        setArrangePrice(arrange[0])
+        setSelectDefaultValue('')
         setIsActiveCategory(category)
         setCategoryProduct(category)
         setPages(pages)

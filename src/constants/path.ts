@@ -18,5 +18,12 @@ export const path = {
     accountOder: '/account/oder/:nameId',
     changePassword: '/account/changepassword',
     updateProfile: '/account/updateprofile',
-    productSearch: "/productSearch"
+    productSearch: "/productSearch",
+
+     // Thêm trang quản lý admin
+    adminDashboard: '/admin',
+    adminProducts: '/admin/products',
+    adminOrders: '/admin/orders',
+    adminUsers: '/admin/users',
+    adminReports: '/admin/reports'
 }
