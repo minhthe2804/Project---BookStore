@@ -11,6 +11,7 @@ import Button from '~/components/Button'
 import Input from '~/components/Input'
 import { path } from '~/constants/path'
 import { toastNotify } from '~/constants/toastNotify'
+import { Auth } from '~/types/auth.type'
 import { schema, Schema } from '~/utils/rules'
 
 type FormData = Pick<Schema, 'email' | 'password'>
@@ -49,7 +50,7 @@ export default function ForgotPassword() {
                 email: string
                 password: string
             }
-        }) => authApi.forgotPassword(bodyData.id, bodyData.body)
+        }) => authApi.forgotPassword(bodyData.id, bodyData.body as Auth)
     })
 
     const onSubmit = handleSubmit((data) => {
